@@ -45,7 +45,7 @@ void julia(PGraphics P) {
       bright = map(sqrt(bright), 0, 1, 0, 255);
 
       if (n == maxierations)
-        P.pixels[i+j*P.width] = color(0);
+        P.pixels[i+j*P.width] = color(255);
       else {
         float hue = sqrt(float(n)/maxierations) * 255;
         P.pixels[i+j*P.width] = color(hue);

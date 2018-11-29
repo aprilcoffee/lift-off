@@ -2,6 +2,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+
 Runtime runtime;
 OperatingSystemMXBean operatingSystemMXBean;
 
@@ -11,6 +12,7 @@ import ddf.minim.signals.*;
 import ddf.minim.effects.*;
 import oscP5.*;
 import netP5.*;
+import javax.sound.sampled.*;
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
@@ -51,6 +53,7 @@ boolean initVideoPlaying = false;
 PImage img;
 PImage[] spaceImg;
 boolean photoTrigger = false;
+boolean photoTriggerImage = false;
 boolean photoKill = false;
 boolean waterTrigger = false;
 int photoLength =11;
@@ -107,6 +110,15 @@ int attractorsSize = 2;
 ArrayList<Particle> particles;
 ArrayList<Blob> blobs;
 
+int cols, rows;
+int scl = 10;
+int w = 500;
+int h = 800;
+float[][] terrainLeft;
+float[][] terrainRight;
+float[] audioAmp;
+
+
 PGraphics juliaTexture;
 float juliaAngle;
 boolean juliaShowTrigger = false;
@@ -127,9 +139,9 @@ String CPUperform="";
 int shabaMode2 = 0;
 void setup() {
   //size(1280, 800, P3D);
-  size(1280, 800, P3D);
+  //size(1920, 1080, P3D);
 
-  //fullScreen(P3D,2);
+  fullScreen(P3D, 2);
 
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
@@ -158,7 +170,10 @@ void setup() {
   minim = new Minim(this);
   in = minim.getLineIn();
   fftLin = new FFT( in.bufferSize(), in.sampleRate() );
-  fftLin.linAverages( 30 );
+  fftLin.logAverages( 22, 3 );
+
+
+
 
   //phase1
   spaceImg = new PImage[photoLength];
@@ -186,7 +201,7 @@ void setup() {
 
   //mode2
   starField = createGraphics(800, 450);
-  orbitTexture = createGraphics(600, 600);
+  orbitTexture = createGraphics(600, 600,P3D);
   img = loadImage("meteorite.jpg");
   geometry = new Geometry[total+1][total+1];
   geometryInit();
@@ -198,7 +213,7 @@ void setup() {
   for (int s=0; s<attractorsSize; s++) {
     attractors[s] = new PVector(width/2, height/2);
   }
-  for (int s=0; s<100; s++) {
+  for (int s=0; s<300; s++) {
     particles.add(new Particle(width/2, height/2+random(-200, 200), random(-50, 50)));
   }
   blobs = new ArrayList<Blob>();
@@ -206,18 +221,36 @@ void setup() {
     blobs.add(new Blob(0, 0, random(330, 350)));
   }
   juliaTexture = createGraphics(640, 480);
-
   setupWater();
+
+
+  cols = w/scl;
+  rows = h/scl;
+  terrainLeft = new float[cols][rows];
+  terrainRight = new float[cols][rows];
+  audioAmp = new float[rows];
+  for (int y = 0; y < rows; y++) { 
+    for (int x = 0; x < cols; x++) {
+      terrainLeft[x][y] = 0;
+      terrainRight[x][y] = 0;
+    }
+    audioAmp[y] = 0;
+  }
+
   fx = new PostFX(this);
   operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 1;
+  phase = 3;
 }
 void draw() {
   //if (moveStuff==true) {
   //  resetSphereLocation();
   //  moveStuff=false;
   //}
+
+  if (frameCount % 10 ==0) {
+    println(str(frameRate));
+  }
   switch(phase) {
   case 0:
     soundCheck();
@@ -263,14 +296,14 @@ void movieEvent(Movie m) {
   m.read();
 }
 
-void keyPressed(){
-  if(key == '1'){
+void keyPressed() {
+  if (key == '1') {
     shabaMode2 = 0;
   }
-  if(key == '2'){
+  if (key == '2') {
     shabaMode2 = 1;
   }
-  if(key == '3'){
+  if (key == '3') {
     shabaMode2 = 2;
   }
 }

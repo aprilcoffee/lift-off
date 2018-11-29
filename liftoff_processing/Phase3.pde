@@ -108,7 +108,7 @@ class Particle {
   PVector pos;
   PVector prevPos;
   ArrayList<PVector> trace;
-  int traceLength = 50;
+  int traceLength = 10;
 
   PVector vel;
   PVector acc;
@@ -130,31 +130,33 @@ class Particle {
   void update() {
     pos.add(vel);
     vel.add(acc);
-    vel.limit(10);
+    vel.limit(15);
     acc.mult(0);
   }
   void show() {
     noFill();
-
     stroke(255, 10);
     strokeWeight(1);
     //point(pos.x, pos.y);
     //line(pos.x, pos.y, prevPos.x, prevPos.y);
     //colorMode(HSB, 255);
-    blendMode(ADD);
-    for (int s=1; s<trace.size(); s++) {
-      if (colorCode<8) {
+    //blendMode(ADD);
+    int showLength = (int)map(constrain(fftLin.getAvg(0)*spectrumScale, 0, 400), 0, 400, 0, trace.size());
+    //println(fftLin.getAvg(0));
+    for (int s=traceLength-1; s>traceLength-showLength; s--) {
+      if (colorCode<6) {
+        colorMode(HSB);
         stroke( 
-          map(s, 0, traceLength, 80, 120), 
-          map(s, 0, traceLength, 40, 120), 
-          map(s, 0, traceLength, 150, 255), 
-          map(s, 0, traceLength, 100, 200));
+          map(s, traceLength-showLength, traceLength, 80, 120), 
+          map(s, traceLength-showLength, traceLength, 0, 120), 
+          map(s, traceLength-showLength, traceLength, 50, 140), 
+          map(s, traceLength-showLength, traceLength, 50, 200));
       } else {
         stroke( 
-          map(s, 0, traceLength, 200, 255), 
-          map(s, 0, traceLength, 0, 120), 
-          map(s, 0, traceLength, 150, 255), 
-          map(s, 0, traceLength, 100, 200));
+          map(s, traceLength-showLength, traceLength, 200, 255), 
+          map(s, traceLength-showLength, traceLength, 0, 120), 
+          map(s, traceLength-showLength, traceLength, 50, 120), 
+          map(s, traceLength-showLength, traceLength, 50, 200));
       }
       line(trace.get(s-1).x, trace.get(s-1).y, trace.get(s).x, trace.get(s).y);
     }
@@ -165,10 +167,166 @@ class Particle {
     PVector force = PVector.sub(target, pos);
     float dsquared = force.magSq();
     dsquared = constrain(dsquared, 50, 400);
-    float G = 50;
+    float G = 150;
     float strength = G/dsquared;
     force.setMag(strength);
-
     acc.add(force);
   }
+}
+
+void drawTerrainInGraphics(PGraphics P) {
+  P.beginDraw();
+  P.background(0, 0);
+  for (int y = rows-1; y >= 1; y--) {
+    for (int x = 0; x < cols; x++) {  
+      terrainLeft[x][y] = terrainLeft[x][y-1];
+      terrainRight[x][y] = terrainRight[x][y-1]; 
+      audioAmp[y]=audioAmp[y-1];
+    }
+  }
+  audioAmp[0] = 0;
+  for (int x = 0; x < cols; x++) {
+    terrainLeft[x][0] = in.left.get(x)*150;
+    terrainRight[x][0] = in.right.get(x)*150;
+    audioAmp[0]+=abs(fftLin.getBand(x*5))*15;//renew Amount of Sound
+  }
+  P.camera(0, -100, 1000, 0, 0, 0, 0, 1, 0);
+  //P.translate(0, 300);
+  //println(audioAmp[0]);
+  //background(255); 
+  //blendMode(ADD);
+  //println(fft.specSize());
+  //-------------------terrain1-------------------
+  P.pushMatrix();
+  //noFill();
+  //fill(255,0,0);
+  //translate(-300, 0);
+  P.rotateX(PI/2);
+  P.scale(2, 1);
+  //translate(-w/2, -h/2); //*****Move a little
+  for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
+    if (audioAmp[y]>5000) {
+      P.stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
+    } else {
+      P.stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
+    }
+    P.beginShape(TRIANGLE_STRIP);
+    for (int x = 0; x < cols; x+=3) {
+      //noStroke();
+      //fill(audioAmp[y], audioAmp[y], audioAmp[y], 100);
+      P.noFill();
+      P.stroke(255);
+      P.vertex(x*scl, y*scl, terrainLeft[x][y]);
+      P.vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+    }
+    P.endShape();
+  }
+  P.popMatrix();
+
+  //-------------------terrain2-------------------
+
+  P.pushMatrix();
+  //translate(300, 0);
+  P.rotateX(PI/2);
+  P.scale(2, 1);
+
+  for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
+    if (audioAmp[y]>5000) {
+      P.stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
+    } else {
+      P.stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
+    }
+    P.beginShape(TRIANGLE_STRIP);
+    for (int x = 0; x < cols; x+=3) {
+      //noStroke();
+      //fill(map(audioAmp[y],0,20000,0,255), audioAmp[y], audioAmp[y], 50);
+      P.noFill();
+      P.stroke(255);
+      P.vertex(-x*scl, y*scl, terrainRight[x][y]);
+      P.vertex(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
+    }
+    P.endShape();
+  }
+  P.popMatrix();
+  P.endDraw();
+}
+
+
+
+void drawTerrain() {
+  for (int y = rows-1; y >= 1; y--) {
+    for (int x = 0; x < cols; x++) {  
+      terrainLeft[x][y] = terrainLeft[x][y-1];
+      terrainRight[x][y] = terrainRight[x][y-1]; 
+      audioAmp[y]=audioAmp[y-1];
+    }
+  }
+  audioAmp[0] = 0;
+  for (int x = 0; x < cols; x++) {
+    terrainLeft[x][0] = in.left.get(x)*150;
+    terrainRight[x][0] = in.right.get(x)*150;
+    audioAmp[0]+=abs(fftLin.getBand(x*5))*15;//renew Amount of Sound
+  }
+  camera(0, -100, 1000, 0, 0, 0, 0, 1, 0);
+  translate(0, 300);
+  //println(audioAmp[0]);
+  //background(255); 
+  //blendMode(ADD);
+  //println(fft.specSize());
+  //-------------------terrain1-------------------
+  pushMatrix();
+  //noFill();
+  //fill(255,0,0);
+  //translate(-300, 0);
+  rotateX(PI/2);
+  scale(2, 1);
+  //translate(-w/2, -h/2); //*****Move a little
+  for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
+    if (audioAmp[y]>5000) {
+      stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
+      println(audioAmp[y]);
+    } else {
+      println(audioAmp[y]);
+      stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
+    }
+    beginShape(TRIANGLE_STRIP);
+    for (int x = 0; x < cols; x+=3) {
+      //noStroke();
+      //fill(audioAmp[y], audioAmp[y], audioAmp[y], 100);
+      noFill();
+      stroke(255);
+      vertex(x*scl, y*scl, terrainLeft[x][y]);
+      vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+    }
+    endShape();
+  }
+  popMatrix();
+
+  //-------------------terrain2-------------------
+
+  pushMatrix();
+  //translate(300, 0);
+  rotateX(PI/2);
+  scale(2, 1);
+
+  for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
+    if (audioAmp[y]>5000) {
+      stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
+      println(audioAmp[y]);
+    } else {
+      println(audioAmp[y]);
+      stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
+    }
+    beginShape(TRIANGLE_STRIP);
+    for (int x = 0; x < cols; x+=3) {
+      //noStroke();
+      //fill(map(audioAmp[y],0,20000,0,255), audioAmp[y], audioAmp[y], 50);
+      noFill();
+      stroke(255);
+      vertex(-x*scl, y*scl, terrainRight[x][y]);
+      vertex(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
+    }
+    endShape();
+  }
+  popMatrix();
 }

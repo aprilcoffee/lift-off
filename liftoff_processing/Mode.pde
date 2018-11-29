@@ -101,7 +101,10 @@ void mode1() {
     //println(spaceImages.size());
     for (int s=0; s<spaceImages.size(); s++) {
       spaceImages.get(s).update(); 
-      spaceImages.get(s).show(); 
+      if (photoTriggerImage==false)
+        spaceImages.get(s).showWithoutImage(); 
+      else
+        spaceImages.get(s).showImage(); 
       if (spaceImages.get(s).imageSizeY<10) {
         spaceImages.remove(s);
       }
@@ -132,7 +135,6 @@ void mode1() {
       observateStarEndPoint = observateStarStartPoint+observationCount;
       ChangeObservationStar=false;
     }
-
     observateStarBackground.beginDraw();
     //observateStarBackground.clear();
     observateStarBackground.background(0, 0);
@@ -146,7 +148,6 @@ void mode1() {
       Rt.drawRoot(observateStarBackground);
     }
     observateStarBackground.endDraw();
-
     imageMode(CENTER);
     image(observateStarBackground, 0, 0, width, height);
   } else {
@@ -170,6 +171,7 @@ void mode1() {
 void mode2(int sphereMode) {
   //if (random(5)>3)
   background(0);
+
   pushMatrix();
   colorMode(HSB, 255);
   blendMode(BLEND);
@@ -211,7 +213,7 @@ void mode2(int sphereMode) {
   float camZ = camR * cos(radians(phase3moveA)*cos(radians(phase3moveT)));
   camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
   orbitTextureDraw(orbitTexture);
-
+  //drawTerrainInGraphics(orbitTexture);
   resetSphereLocation();
   if (flyAway==true) {
     for (int s=0; s<20; s++) {
@@ -267,7 +269,6 @@ void mode2(int sphereMode) {
       newLonMinHalf = newLonMaxHalf;
       newLonMaxHalf = temp;
     }
-
     newLatMinHalf = (int)random(total);    
     newLatMaxHalf = (int)random(total);
     if (newLatMinHalf > newLatMaxHalf) {
@@ -277,8 +278,6 @@ void mode2(int sphereMode) {
     }
     showHalfTrigger=false;
   }
-
-
   if (showAllgeo==true) {
     for (int i=0; i<total; i++) {
       for (int j=0; j<total; j++) {
@@ -324,6 +323,7 @@ void mode2(int sphereMode) {
   }
   changSuperShape();
   popMatrix();
+  //image(orbitTexture,width/2,height/2,width,height);
 }
 void keyReleased() {
 }
@@ -331,15 +331,15 @@ void mode3() {
   julia(juliaTexture);
   pushMatrix();
   colorMode(RGB, 255);
-  blendMode(ADD);  
+  blendMode(SUBTRACT);  
   float movementScale = spectrumScale ;
   float shakeGlitch = map(totalAmp, 0, 100000, 0, 15);
-  if (random(shakeGlitch)<5) {
-    background(0);
-  }
+  //if (random(shakeGlitch)<5) {
+  background(255);
+  //}
   soundCheck();
   stroke(255);
-  strokeWeight(4);
+  strokeWeight(1);
 
   for (int i=0; i<attractorsSize; i++) {
     point(attractors[i].x, attractors[i].y);
@@ -353,8 +353,6 @@ void mode3() {
   if (attractors[0].y>height)attractors[0].y = height+random(-30, 30);
   if (attractors[1].x<0)attractors[1].x = random(-30, 30);
   if (attractors[1].y<0)attractors[1].y = random(-30, 30);
-
-
   //  attractors[1].z = 50*sin(radians(frameCount*2));
 
   for (int s=0; s< particles.size(); s++) {
@@ -364,24 +362,27 @@ void mode3() {
     particles.get(s).update();
     particles.get(s).show();
   }
-
-  popMatrix();
-  translate(width/2, height/2);
-  for (int s=0; s<blobs.size(); s++) {
-    blobs.get(s).update();
-    blobs.get(s).show();
-    blobs.get(s).cons();
-  }
-  imageMode(CENTER);
-
+  //drawTerrain();
+  popMatrix();  
+  /*
+   translate(width/2, height/2);
+   for (int s=0; s<blobs.size(); s++) {
+   blobs.get(s).update();
+   blobs.get(s).show();
+   blobs.get(s).cons();
+   }
+   imageMode(CENTER);ㄜㄠ
+   */
   if (juliaShowTrigger) {
     tint(100);
     image(juliaTexture, 0, 0, width, height);
     juliaShowTrigger=false;
+    tint(255);
   }
+  /*
   if (bobbyTrigger) {
-    filter(INVERT);
-  }
+   filter(INVERT);
+   }*/
 }
 void mode4() {
 }

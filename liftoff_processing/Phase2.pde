@@ -28,7 +28,7 @@ float superShape(float theta, float m, float n1, float n2, float n3) {
 }
 void orbitTextureDraw(PGraphics P) {
   P.beginDraw();
-  P.clear();
+  //P.clear();
   if (crashSide==true) {
     P.colorMode(HSB, 255);
     P.tint(random(255), 200, 200);

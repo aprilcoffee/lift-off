@@ -125,11 +125,28 @@ class SpaceImages {
   void kill() {
     dead = true;
   }
-  void show() {
+  void showImage() {
     stroke(255, 0, 0);
     imageMode(CENTER);
     // PImage temp = imageGlitch(spaceImg[imageFlag]);
     image(spaceImg[imageFlag], photoX, photoY, imageSizeX, imageSizeY);
+    rectMode(CENTER);
+    stroke(255, 100);
+    strokeWeight(0.5);
+    noFill();
+    rect(photoX, photoY, imageSizeX, imageSizeY);
+    text_locX.show(textX, textY-10, 10);
+    text_locY.show(textX, textY+10, 10);
+    if (dir==1)
+      line(photoX-imageSizeX/2, photoY, textX, textY);
+    else
+      line(photoX+imageSizeX/2, photoY, textX, textY);
+  }
+  void showWithoutImage() {
+    stroke(255, 0, 0);
+    imageMode(CENTER);
+    // PImage temp = imageGlitch(spaceImg[imageFlag]);
+    //image(spaceImg[imageFlag], photoX, photoY, imageSizeX, imageSizeY);
     rectMode(CENTER);
     stroke(255, 100);
     strokeWeight(0.5);
