@@ -56,8 +56,6 @@ void soundCheck() {
   fftLin.forward( in.mix );
   //fftLog.forward( in.mix );
 
-
-
   int w = int( width/fftLin.avgSize() );
   for (int i = 0; i < fftLin.avgSize(); i++)
   {

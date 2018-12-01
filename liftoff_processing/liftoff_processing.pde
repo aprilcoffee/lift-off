@@ -141,7 +141,7 @@ void setup() {
   //size(1280, 800, P3D);
   //size(1920, 1080, P3D);
 
-  fullScreen(P3D, 2);
+  fullScreen(P3D, 1);
 
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
@@ -236,11 +236,10 @@ void setup() {
     }
     audioAmp[y] = 0;
   }
-
   fx = new PostFX(this);
   operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 3;
+  phase = 2;
 }
 void draw() {
   //if (moveStuff==true) {
