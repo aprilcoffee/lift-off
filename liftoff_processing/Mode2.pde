@@ -1,7 +1,9 @@
 
 void mode2(int sphereMode) {
   //if (random(5)>3)
-  background(0);
+  if (transiting==false && transition==2) {
+    background(0);
+  }
   pushMatrix();
   colorMode(HSB, 255);
   blendMode(BLEND);
@@ -18,7 +20,7 @@ void mode2(int sphereMode) {
   //if (random(5)>3) 
   if (transition2to3Dark>50) {
   } else {
-    starField.background(0,0);
+    starField.background(0, 0);
   }
   starField.translate(starWidth/2, starHeight/2);
   for (int s=0; s<stars.size(); s++) {

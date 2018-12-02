@@ -1,4 +1,3 @@
-
 void setupWater() {
   waterCols = waterRipple.width;
   waterRows = waterRipple.height;
@@ -51,11 +50,10 @@ void ShowobservationStar() {
   }
   observateStarBackground.endDraw();
 }
+
 class TargetSystem {
-  textGenerator text_locX;
-  textGenerator text_locY;
-  textGenerator text_angle;
   float x, y;
+  float xx, yy;
   float px, py;
   float r;
   float angle;
@@ -71,9 +69,6 @@ class TargetSystem {
     v = random(0.7, 2);
     ori_v = v;
     //targetMode = etargetMode;
-    text_locX = new textGenerator("");
-    text_locY = new textGenerator("");
-    text_angle = new textGenerator("");
   }
   void resetVel() {
     v = 0;
@@ -83,42 +78,45 @@ class TargetSystem {
     y = r * sin(radians(angle));
     angle += abs(v*dir);
     v+=(ori_v-v)*easing;
-    text_locX.update(nfc(x, 3));
-    text_locY.update(nfc(y, 3));
-    text_angle.update(nfc(angle, 3));
+    if (targetingCenter == true) {
+      r--;
+      if (r<=0)r=0;
+    }
   }
   void showBall() {
     if (targetSystemShow == true) {
       if (dir>0) {
-        for (int s=0; s<=20; s+=4) {
+        for (int s=-50; s<=50; s+=4) {
           stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))));
           line(x-s, -height, x-s, height);
         }
       } else {
-        for (int s=0; s<=20; s+=4) {
+        for (int s=-50; s<=50; s+=4) {
           stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))));
           line(-width, y-s, width, y-s);
         }
       }
       pushMatrix();
       translate(x, y);
-      text_locX.show(10, -15, 12);
-      text_locY.show(10, 0, 12);
-      text_angle.show(10, 15, 12);
+      textSize(12);
+      text(nfc(x, 3), 10, -15);
+      text(nfc(y, 3), 10, 0);
+      text(nfc(angle, 3), 10, 15);
+
       noStroke();
       fill(255);
       ellipse(0, 0, 5, 5);
       popMatrix();
     } else if (targetSystemLineA==true) {
       if (dir>0) {
-        for (int s=0; s<=100; s+=4) {
+        for (int s=-50; s<=50; s+=4) {
           stroke(255, 255, 255, 150*sin(radians(map(s, -100, 100, 0, 180))));
           line(x-s, -height, x-s, height);
         }
       }
     } else if (targetSystemLineB==true) {
       if (dir==-1)
-        for (int s=0; s<=100; s+=4) {
+        for (int s=-50; s<=50; s+=4) {
           stroke(255, 255, 255, 150*sin(radians(map(s, -100, 100, 0, 180))));
           line(-width, y-s, width, y-s);
         }
@@ -151,6 +149,12 @@ class TargetShot {
   }
 }
 
+void glitchReset() {
+  for (int s=0; s<photoLength; s++) {
+    spaceImg[s] = loadImage("space_imgs/"+(s+1)+".jpeg");
+    spaceImgBW[s] = loadImage("space_imgsBW/"+(s+1)+".jpeg");
+  }
+}
 class SpaceImages {
   float photoX, photoY, photoZ;
   float r = 300;
@@ -161,42 +165,51 @@ class SpaceImages {
   float ori_imageSizeX = imageSizeX;
   int imageFlag = int(random(photoLength));
   boolean dead = false;
-  textGenerator text_locX;
-  textGenerator text_locY;
   float textX;
   float textY;
+  float photoXOri;
+  float photoYOri;
   int dir;
   float spin = 0;
   float spinAdjust;
   float spinRadians;
-  SpaceImages(float ex, float ey, int edir, float targetX) {
+  float textEasing = 0.3; 
+  int imageMode = 0;
+  SpaceImages(float ex, float ey, int edir, float targetX, int eimageMode) {
     photoX = ex;
     photoY = ey;
     photoZ = 0;
     dir = edir;
+    imageMode = eimageMode;
     if (dir==0)photoX = -photoX;
     spinRadians = photoX;
 
-    text_locX = new textGenerator("");
-    text_locY = new textGenerator("");
     textX = targetX+random(-15, 15);
     textY = photoY;
-    spin = random(360);
-    spinAdjust = random(3);
-    spin = 90;
-    spinAdjust = 0;
+
+    photoXOri = 0;
+    photoYOri = 0;
+
+    // 0 blank 1 BWImg 2 colImg 3 spin
+    if (photoSpin == true) {
+      spin = 90 + random(showImageCounterAfterSpin);
+      spinAdjust = random(2);
+    } else {
+      spin = 90;
+      spinAdjust = 0;
+    }
   }
   void update() {
     imageSizeY = ori_imageSizeY*sin(radians(angle));
-    text_locX.update(nfc(photoX, 3));
-    text_locY.update(nfc(photoY, 3));
     if (dead) { 
       imageSizeX = ori_imageSizeX + tan(radians(angle+45));
-      angle += 10;
+      angle +=5;
     }
     photoX = spinRadians*sin(radians(spin));
     photoZ = spinRadians*cos(radians(spin));
     spin += spinAdjust;
+    photoXOri += (photoX - photoXOri)*textEasing;
+    photoYOri += (photoY - photoYOri)*textEasing;
   }
   void kill() {
     dead = true;
@@ -205,27 +218,33 @@ class SpaceImages {
     noFill();
     pushMatrix();
     translate(photoX, photoY, photoZ);
-    image(spaceImg[imageFlag], 0, 0, imageSizeX, imageSizeY);
-    rect(0, 0, imageSizeX, imageSizeY);
+
+
+    if (glitchTrigger==true) {
+      if (imageMode == 1) {
+        image(imageGlitch(spaceImgBW[imageFlag]), 0, 0, imageSizeX, imageSizeY);
+      } else if (imageMode == 2) {
+        image(imageGlitch(spaceImg[imageFlag]), 0, 0, imageSizeX, imageSizeY);
+      }
+    } else {
+      if (imageMode == 0) {
+        rect(0, 0, imageSizeX, imageSizeY);
+      } else if (imageMode == 1) {
+        image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
+        rect(0, 0, imageSizeX, imageSizeY);
+      } else if (imageMode == 2) {
+        image(spaceImg[imageFlag], 0, 0, imageSizeX, imageSizeY);
+        rect(0, 0, imageSizeX, imageSizeY);
+      }
+    }
     popMatrix();
-    text_locX.show(textX, textY-10, 10);
-    text_locY.show(textX, textY+10, 10);
+    textSize(12);
+    text(nfc(photoXOri, 3), textX, textY-10);
+    text(nfc(photoYOri, 3), textX, textY+10);
     if (dir==1)
       line(photoX-imageSizeX/2, photoY, photoZ, textX, textY, 0);
     else
       line(photoX+imageSizeX/2, photoY, photoZ, textX, textY, 0);
-  }
-  void showWithoutImage() {
-    noFill();
-    pushMatrix();
-    rect(photoX, photoY, imageSizeX, imageSizeY);
-    text_locX.show(textX, textY-10, 10);
-    text_locY.show(textX, textY+10, 10);
-    if (dir==1)
-      line(photoX-imageSizeX/2, photoY, textX, textY);
-    else
-      line(photoX+imageSizeX/2, photoY, textX, textY);
-    popMatrix();
   }
 }
 

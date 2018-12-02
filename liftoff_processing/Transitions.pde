@@ -5,7 +5,6 @@ void transitionShow0to1() {
   for (int s=0; s<blobs.size(); s++) {
     blobs.get(s).killMode1 = true;
   }
-
   if (transition0to1Dark>=255) {
     transition0to1Dark = 255;
     phase = 1; 
@@ -17,13 +16,21 @@ void transitionShow0to1() {
   rect(0, 0, width, height);
 }
 void transitionShow1to2() {
-  transition0to1Dark = 0;
-  transition1to2Dark +=5;  
+  transition1to2Dark ++;  
+  println(transition1to2Dark);
+  dampening = 0.99;
+
   if (transition1to2Dark>=255) {
     transition1to2Dark = 255;
     phase = 2; 
     transiting = false;
+    killPhase1();
   }
+  rectMode(LEFT);
+  colorMode(RGB, 255);
+  fill(0, transition1to2Dark);
+  rect(0, 0, width, height); 
+  noStroke();
 }
 void transitionShow2to3() {
   transition2to3Dark+=5;

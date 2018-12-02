@@ -4,10 +4,10 @@ void mode3() {
   pushMatrix();
   colorMode(RGB, 255);
   blendMode(SUBTRACT);  
+  background(255);
   float movementScale = spectrumScale ;
   float shakeGlitch = map(totalAmp, 0, 100000, 0, 15);
   //if (random(shakeGlitch)<5) {
-  background(255);
   //}
   soundCheck();
   stroke(255);

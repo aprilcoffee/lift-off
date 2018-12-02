@@ -19,27 +19,58 @@ public void test(int theA, int theB) {
    photoTriggerImage
    */
   if (theA == 1) {
-    if (theB==0) {
+    switch(theB) {
+    case 0:
       targetSystemLineA = true; 
       targetSystemLineB = false;
-    } else if (theB==1) {
+      break;
+    case 1:
       targetSystemLineA = false;
       targetSystemLineB = true;
-    } else if (theB==2) {
+      break;
+    case 2:
       targetSystemShow = true;
-    } else if (theB==3) {
+      break;
+    case 3:
       ChangeObservationStar=true;
-    } else if (theB==4) {
+      break;
+    case 4:
+      waterTrigger = true;
+      break;
+    case 5:
       photoTrigger = true; //showImage
+      break;
+    case 6:
+      photoTriggerImageRect = true;
+      photoTriggerImageBW = false;
+      photoTriggerImage = false;
+      break;
+    case 7:
+      photoTriggerImageRect = false;
+      photoTriggerImageBW = true;
+      photoTriggerImage = false;
+      break;
+    case 8:
+      photoTriggerImageRect = false;
+      photoTriggerImageBW = false;
       photoTriggerImage = true;
-    } else if (theB==5) {
+      break;
+    case 9:
       photoKill = true;
-    } else if (theB==4) {
-      photoTrigger = true; //showImage
-      photoTriggerImage = true;
-    } else if (theB==4) {
-      photoTrigger = true; //showImage
-      photoTriggerImage = true;
+      break;
+    case 10:
+      photoSpin = true;
+      break;
+    case 11:
+      phase1CornerCall = true;
+      break;
+    case 12:
+      glitchTrigger = true;
+      break;
+    case 13:
+      glitchTrigger = false;
+      glitchReset();
+      break;
     }
   } 
   /*
@@ -76,6 +107,62 @@ public void test(int theA, int theB) {
     } else if (theB==1) {
       juliaShowTrigger = true;
     }
+  }
+}
+
+void noteOff(int channel, int pitch, int velocity) {
+  // Receive a noteOff
+  println();
+  println("Note Off:");
+  println("--------");
+  println("Channel:"+channel);
+  println("Pitch:"+pitch);
+  println("Velocity:"+velocity);
+
+  OscMessage myMessage = new OscMessage("/test");
+  myMessage.add(phase);
+  if (channel==0) {
+    if (pitch>=96 && pitch<=103) {
+      if (midiBusing[pitch-96]==true)midiBusing[pitch-96]=false;
+      else midiBusing[pitch-96]=true;
+      myMessage.add(pitch-96);
+      if (midiBusing[pitch-96]==false) {
+        myMessage.add(0);
+      } else {
+        myMessage.add(1);
+      }
+      oscP5.send(myMessage, myRemoteLocation);
+    } else if (pitch>=112 && pitch<=119) {
+      if (midiBusing[pitch-104]==true)midiBusing[pitch-104]=false;
+      else midiBusing[pitch-104]=true;
+      myMessage.add(pitch-104);
+      if (midiBusing[pitch-104]==false) {
+        myMessage.add(0);
+      } else {
+        myMessage.add(1);
+      }
+      oscP5.send(myMessage, myRemoteLocation);
+    } else if (pitch==104) {
+      if (midiBusing[16]==true)midiBusing[16]=false;
+      else midiBusing[16]=true;
+      myMessage.add(16);
+      if (midiBusing[16]==false) {
+        myMessage.add(0);
+      } else {
+        myMessage.add(1);
+      }
+      oscP5.send(myMessage, myRemoteLocation);
+    } else if (pitch==120) {
+      if (midiBusing[17]==true)midiBusing[17]=false;
+      else midiBusing[17]=true;
+      myMessage.add(17);
+      if (midiBusing[17]==false) {
+        myMessage.add(0);
+      } else {
+        myMessage.add(1);
+      }
+    }
+    oscP5.send(myMessage, myRemoteLocation);
   }
 }
 void soundCheck() {

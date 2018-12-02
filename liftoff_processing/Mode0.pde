@@ -5,11 +5,9 @@ void initPhase() {
   blendMode(BLEND);
   pushMatrix();
   float shakeGlitch = map(transition0to1Dark, 0, 255, 5, 150);
-
   LTGlogo = loadImage("LTG.png");
   LTGlogo.loadPixels();
   color randomColor = color(random(255), random(255), random(255), 255);
-
   if (random(100)<(25+shakeGlitch/2)) {
     for (int y=0; y<LTGlogo.height; y++) {
       for (int x=0; x<LTGlogo.width; x++) {

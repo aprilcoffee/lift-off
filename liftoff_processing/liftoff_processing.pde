@@ -14,8 +14,12 @@ import oscP5.*;
 import netP5.*;
 import javax.sound.sampled.*;
 
+import themidibus.*; //Import the library
+
 OscP5 oscP5;
 NetAddress myRemoteLocation;
+MidiBus myBus; // The MidiBus
+boolean[] midiBusing;
 
 import processing.video.*;
 
@@ -51,12 +55,20 @@ int phase1Counter = 0;
 PImage[] spaceImg;
 PImage[] spaceImgBW;
 boolean photoTrigger = false;
+boolean photoTriggerImageRect = false;
+boolean photoTriggerImageBW = false;
 boolean photoTriggerImage = false;
 boolean photoKill = false;
+boolean photoSpin = false;
+boolean glitchTrigger = false;
+boolean glitchEnd = false;
+int showImageCounterAfterSpin = 0;
 boolean waterTrigger = false;
 boolean targetSystemLineA = false;
 boolean targetSystemLineB = false;
 boolean targetSystemShow = false;
+boolean targetingCenter = false;
+boolean phase1CornerCall = false;
 int photoLength =25;
 ArrayList photoToShow;
 float phase1offX = random(100);
@@ -150,7 +162,7 @@ String CPUperform="";
 // shaba mode 2
 int shabaMode2 = 0;
 void setup() {
-  size(1280, 720, P3D);
+  size(1920, 1080, P3D);
   //size(1920, 1080, P3D);
   //fullScreen(P3D, 1);
   frameRate(30);
@@ -165,10 +177,17 @@ void setup() {
 
   //OSCinit
   oscP5 = new OscP5(this, 12000);
-  myRemoteLocation = new NetAddress("127.0.0.1", 12000);
+  myRemoteLocation = new NetAddress("127.0.0.1", 13000);
   oscP5.plug(this, "initVideo", "/initVideo");
   oscP5.plug(this, "test", "/test");
-  oscP5.plug(this, "mode", "/mode");
+  oscP5.plug(this, "mode", "/mode");  
+  midiBusing = new boolean[18];
+  for (int s=0; s<16; s++) {
+    midiBusing[s]=false;
+  }
+  MidiBus.list(); // List all available Midi devices on STDOUT. This will show each device's index and name.
+  myBus = new MidiBus(this, "LK Mini InControl", "LK Mini InControl"); // Create a new MidiBus with no input device and the default Java Sound Synthesizer as the output device.
+
 
 
   //initPhase
@@ -204,7 +223,8 @@ void setup() {
   observateStarEndPointEasing = observateStarStartPoint;
   observateStarEndPoint=observateStarStartPoint;
   spaceImages = new ArrayList<SpaceImages>();
-  waterRipple = createGraphics(960, 540);
+  waterRipple = createGraphics(640, 480, P2D);
+  setupWater();
 
   //mode2
   starField = createGraphics(800, 450, P3D);
@@ -231,8 +251,6 @@ void setup() {
     blobs.add(new Blob(0, 0, random(330, 350)));
   }
   juliaTexture = createGraphics(640, 480);
-  setupWater();
-
 
   cols = w/scl;
   rows = h/scl;
@@ -248,52 +266,61 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 2;
+  phase = 1;
 }
 void draw() {
-
   //if (frameCount % 10 ==0) {
   //  println(str(frameRate));
   // }
-  switch(phase) {
-  case 0:
-    soundCheck();
-    initPhase();
-    break;
-  case 1:
-    mode1();
-    phase1Counter++;
-    break;
-  case 2:
-    mode2(shabaMode2);
-    phase2Counter++;
-    break;
-  case 3:
-    mode3();
-    phase3Counter++;
-    break;
-  case 4:
-    mode4();
-    break;
-  }    
   if (transiting) {
     switch(transition) {
     case 0:
       break;
     case 1:
+      println("trans0to1");
+      soundCheck();
+      initPhase();
       transitionShow0to1();
       break;
     case 2:
+      println("trans0to1");
+      mode1();
       transitionShow1to2();
+      mode2(shabaMode2);
       break;
     case 3:
+      mode2(shabaMode2);
       transitionShow2to3();
+      mode3();
       break;
     case 4:
       transitionShow3to0();
       break;
     }
+  } else {
+    switch(phase) {
+    case 0:
+      soundCheck();
+      initPhase();
+      break;
+    case 1:
+      mode1();
+      phase1Counter++;
+      break;
+    case 2:
+      mode2(shabaMode2);
+      phase2Counter++;
+      break;
+    case 3:
+      mode3();
+      phase3Counter++;
+      break;
+    case 4:
+      mode4();
+      break;
+    }
   }
+
   //if (frameCount==0)filter(INVERT);
   //fx.render();  
   if (frameCount % 3600 ==0)runtime.gc();
