@@ -8,11 +8,15 @@ void changSuperShape() {
   n1 = 3;
   n2 = 4+3.53*cos(radians(frameCount*6));
   n3 = 1.732+5*sin(radians(frameCount/7.3));
+
+  m = 5;
+  n1 = 60;
+  n2 = 100+300*sin(radians(frameCount));
+  n3 = 100;
 }
 float superShape(float theta, float m, float n1, float n2, float n3) {
   float a=1;
   float b=1;
-
   //float r = 1;
   float t1 = abs((1/a)*cos(m*theta/4));
   t1 = pow(t1, n2);
@@ -29,14 +33,11 @@ float superShape(float theta, float m, float n1, float n2, float n3) {
 void orbitTextureDraw(PGraphics P) {
   P.beginDraw();
   //P.clear();
-  if (crashSide==true) {
-    P.colorMode(HSB, 255);
-    P.tint(random(255), 200, 200);
-    crashSide=false;
-  } else {
-    P.tint(255);
+  if (changeTexture==true) {
+    currentPlanetImage = (int)random(6);
+    changeTexture = false;
   }
-  P.image(img, 0, 0, P.width, P.height);
+  P.image(planetImage[currentPlanetImage], 0, 0, P.width, P.height);
   P.endDraw();
 }
 void geometryInit() {
@@ -147,7 +148,7 @@ class Geometry {
     if (showMode == 1) {
       beginShape(POINTS);
     } else {
-      beginShape();
+      beginShape(TRIANGLE_STRIP);
     }
     if (textureOn==true) {
       texture(orbitTexture);
@@ -165,18 +166,13 @@ class Geometry {
     vertex(globe[0].x, globe[0].y, globe[0].z, globeTexture.y, globeTexture.x);
     vertex(globe[1].x, globe[1].y, globe[1].z, tempRight.y, tempRight.x);
     vertex(globe[2].x, globe[2].y, globe[2].z, tempDown.y, tempDown.x);
-    endShape(CLOSE);
-    popMatrix();
+    //endShape(CLOSE);
 
-    pushMatrix();
-
-
-
-    if (showMode == 1) {
-      beginShape(POINTS);
-    } else {
-      beginShape();
-    }
+    //if (showMode == 1) {
+    //  beginShape(POINTS);
+    //} else {
+    //  beginShape();
+    //}
     if (textureOn==true) {
       texture(orbitTexture);
     } else {
@@ -189,11 +185,11 @@ class Geometry {
         noStroke();
       }
     }
-    textureMode(NORMAL);
     vertex(globe[4].x, globe[4].y, globe[4].z, tempDown.y, tempDown.x);
     vertex(globe[3].x, globe[3].y, globe[3].z, tempRight.y, tempRight.x);
     vertex(globe[5].x, globe[5].y, globe[5].z, tempRightDown.y, tempRightDown.x);
     endShape(CLOSE);
+
     popMatrix();
   }
 

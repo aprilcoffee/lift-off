@@ -8,27 +8,58 @@ public void initVideo(int theA) {
   initVideoPlaying = true;
 }
 public void test(int theA, int theB) {
+  /*
+  targetSystemLineA
+   targetSystemLineB
+   targetSystemShow
+   photoTrigger //ShowImageGrid
+   photoKill
+   waterTrigger
+   ChangeObservationStar
+   photoTriggerImage
+   */
   if (theA == 1) {
     if (theB==0) {
-      photoTrigger = true; //showImageGrid
+      targetSystemLineA = true; 
+      targetSystemLineB = false;
     } else if (theB==1) {
-      photoKill = true;    //killImage
+      targetSystemLineA = false;
+      targetSystemLineB = true;
     } else if (theB==2) {
-      waterTrigger = true;
+      targetSystemShow = true;
     } else if (theB==3) {
       ChangeObservationStar=true;
     } else if (theB==4) {
       photoTrigger = true; //showImage
       photoTriggerImage = true;
+    } else if (theB==5) {
+      photoKill = true;
+    } else if (theB==4) {
+      photoTrigger = true; //showImage
+      photoTriggerImage = true;
+    } else if (theB==4) {
+      photoTrigger = true; //showImage
+      photoTriggerImage = true;
     }
-  } else if (theA==2) {
+  } 
+  /*
+  addStarTrigger
+   showHalf //together
+   showHalfTrigger //together
+   showAllgeo
+   changeTexture
+   textureOn
+   crashSide
+   startMove
+   */
+  else if (theA==2) {
     if (theB==0) {
       addStarTrigger=true;
     } else if (theB == 1) {
-      showHalf = true;
-      showHalfTrigger = true;
+      showHalf =true; //together
+      showHalfTrigger=true; //together
     } else if (theB == 2) {
-      showAllgeo = true;
+      changeTexture = true;
     } else if (theB == 3) {
       textureOn = true;
     } else if (theB == 4) {

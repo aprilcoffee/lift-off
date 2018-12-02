@@ -5,8 +5,8 @@ class Star {
   float speed;
 
   float R, theta, v, proportion, proportionV;
-  
-  float ssx,ssy;
+
+  float ssx, ssy;
   Star(int eSpeed, float _proportionV) {
     pos.x = random(-starWidth/4, starWidth/4);
     pos.y = random(-starHeight/4, starHeight/4);
@@ -35,7 +35,6 @@ class Star {
     }
   }
   void show(PGraphics P) {
-
     float sx = map(pos.x/pos.z, 0, 1, 0, starWidth);
     float sy = map(pos.y/pos.z, 0, 1, 0, starHeight);
     float r = map(pos.z, 0, starWidth, 2, 0.3);
@@ -44,14 +43,15 @@ class Star {
 
     float x = (1-proportion)*px+proportion*R*cos(radians(theta));
     float y = (1-proportion)*py+proportion*R*sin(radians(theta));
+    float z = R*sin(radians(frameCount));
+
     float ssx = (1-proportion)*sx+proportion*R*cos(radians(theta-v));
     float ssy = (1-proportion)*sy+proportion*R*sin(radians(theta-v));
-    
-    
+    float ssz = R*sin(radians(frameCount-1));
 
     P.stroke(255, 200);
     P.strokeWeight(r);
-    P.line(x, y, ssx, ssy);
+    P.line(x, y, z, ssx, ssy, ssz);
     pz = pos.z;
   }
 }

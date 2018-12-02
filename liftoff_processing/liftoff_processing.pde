@@ -23,8 +23,6 @@ import ch.bildspur.postfx.builder.*;
 import ch.bildspur.postfx.pass.*;
 import ch.bildspur.postfx.*;
 
-PostFX fx;
-
 //modeCheck
 int phase = 0;
 int transition=0;
@@ -43,20 +41,23 @@ float spectrumScale = 4;
 float totalAmp = 0;
 
 //initPhase
-Movie initMovie;
 PImage LTGlogo;
 PImage glitchBG;
 boolean initVideoTrigger = false;
 boolean initVideoPlaying = false;
 
 //Phase1
-PImage img;
+int phase1Counter = 0;
 PImage[] spaceImg;
+PImage[] spaceImgBW;
 boolean photoTrigger = false;
 boolean photoTriggerImage = false;
 boolean photoKill = false;
 boolean waterTrigger = false;
-int photoLength =11;
+boolean targetSystemLineA = false;
+boolean targetSystemLineB = false;
+boolean targetSystemShow = false;
+int photoLength =25;
 ArrayList photoToShow;
 float phase1offX = random(100);
 ArrayList<TargetSystem> targetSystem;
@@ -72,9 +73,15 @@ int observationCount = 0;
 int waterCount = 10;
 int targetCount = 0;
 PGraphics waterRipple;
+int waterCols = 200;
+int waterRows = 200;
+float [][] currentWater;
+float [][] previousWater;
+float dampening = 0.95;
 
 
 //phase2
+int phase2Counter = 0;
 PGraphics starField;
 PGraphics orbitTexture;
 ArrayList<Star> stars = new ArrayList<Star>();
@@ -96,6 +103,10 @@ boolean crashSide = false;
 boolean showHalf = false;
 boolean showHalfTrigger = false;
 boolean startMove = false;
+boolean changeTexture = false;
+PImage[] planetImage;
+int planetImageLength = 6;
+int currentPlanetImage = 0;
 int newLonMinHalf = 0;    
 int newLonMaxHalf = 0; 
 int newLatMinHalf = 0;    
@@ -105,6 +116,7 @@ float phase3moveT;
 
 
 //phase3
+int phase3Counter = 0;
 PVector[] attractors;
 int attractorsSize = 2;
 ArrayList<Particle> particles;
@@ -138,11 +150,9 @@ String CPUperform="";
 // shaba mode 2
 int shabaMode2 = 0;
 void setup() {
-  //size(1280, 800, P3D);
+  size(1280, 720, P3D);
   //size(1920, 1080, P3D);
-
-  fullScreen(P3D, 1);
-
+  //fullScreen(P3D, 1);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -162,7 +172,6 @@ void setup() {
 
 
   //initPhase
-  initMovie = new Movie(this, "movie/SpaceXTimelapseNoSound.mp4");
   LTGlogo = loadImage("LTG.png");
   glitchBG = loadImage("Pixels.jpg");
 
@@ -172,20 +181,18 @@ void setup() {
   fftLin = new FFT( in.bufferSize(), in.sampleRate() );
   fftLin.logAverages( 22, 3 );
 
-
-
-
   //phase1
   spaceImg = new PImage[photoLength];
+  spaceImgBW = new PImage[photoLength];
   for (int s=0; s<photoLength; s++) {
-    spaceImg[s] = loadImage((s+1)+".jpeg");
+    spaceImg[s] = loadImage("space_imgs/"+(s+1)+".jpeg");
+    spaceImgBW[s] = loadImage("space_imgsBW/"+(s+1)+".jpeg");
   } 
   //ballCollection = new ArrayList();
   //createStuff();
   targetSystem = new ArrayList<TargetSystem>();
   targetSystem.add(new TargetSystem(200, random(360), 1));
   targetSystem.add(new TargetSystem(200, random(360), -1));
-  targetShot = new ArrayList<TargetShot>();
   observateStar=new ArrayList<ObservateStar>();
   for (int s=-800; s<800; s+=1) {
     float x = s;
@@ -200,9 +207,12 @@ void setup() {
   waterRipple = createGraphics(960, 540);
 
   //mode2
-  starField = createGraphics(800, 450);
-  orbitTexture = createGraphics(600, 600,P3D);
-  img = loadImage("meteorite.jpg");
+  starField = createGraphics(800, 450, P3D);
+  orbitTexture = createGraphics(600, 600, P3D);
+  planetImage = new PImage[planetImageLength];
+  for (int s=0; s<planetImageLength; s++) {
+    planetImage[s] = loadImage("planet"+s+".jpeg");
+  }
   geometry = new Geometry[total+1][total+1];
   geometryInit();
   //starField.beginDraw();
@@ -236,20 +246,15 @@ void setup() {
     }
     audioAmp[y] = 0;
   }
-  fx = new PostFX(this);
-  operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
+  //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
   phase = 2;
 }
 void draw() {
-  //if (moveStuff==true) {
-  //  resetSphereLocation();
-  //  moveStuff=false;
-  //}
 
-  if (frameCount % 10 ==0) {
-    println(str(frameRate));
-  }
+  //if (frameCount % 10 ==0) {
+  //  println(str(frameRate));
+  // }
   switch(phase) {
   case 0:
     soundCheck();
@@ -257,12 +262,15 @@ void draw() {
     break;
   case 1:
     mode1();
+    phase1Counter++;
     break;
   case 2:
     mode2(shabaMode2);
+    phase2Counter++;
     break;
   case 3:
     mode3();
+    phase3Counter++;
     break;
   case 4:
     mode4();
@@ -291,10 +299,6 @@ void draw() {
   if (frameCount % 3600 ==0)runtime.gc();
   surface.setTitle(str(frameRate));
 }
-void movieEvent(Movie m) {
-  m.read();
-}
-
 void keyPressed() {
   if (key == '1') {
     shabaMode2 = 0;
