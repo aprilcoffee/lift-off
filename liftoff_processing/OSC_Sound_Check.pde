@@ -94,7 +94,7 @@ public void test(int theA, int theB) {
     } else if (theB == 3) {
       textureOn = true;
     } else if (theB == 4) {
-      crashSide = true;
+      showAllgeo = true;
     } else if (theB == 5) {
       startMove = true;
     }

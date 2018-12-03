@@ -1,4 +1,3 @@
-
 void mode3() { 
   julia(juliaTexture);
   pushMatrix();
@@ -7,6 +6,7 @@ void mode3() {
   background(255);
   float movementScale = spectrumScale ;
   float shakeGlitch = map(totalAmp, 0, 100000, 0, 15);
+  println(totalAmp);
   //if (random(shakeGlitch)<5) {
   //}
   soundCheck();

@@ -5,7 +5,6 @@ void mode1() {
   translate(width/2, height/2);
   drawWaterRipple();
   blendMode(BLEND);
-
   if (phase1CornerCall ==true) {
     targetingCenter=true;
   }
@@ -54,23 +53,35 @@ void mode1() {
      boolean photoSpin = false;
      */
     if (phase1CornerCall==true) {
-      spaceImages.add(new SpaceImages(500+random(-20, 20), 
-        targetSystem.get(0).y, 
-        dir, targetSystem.get(0).x, 3));
+      if (photoTriggerImageRect==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 0));
+      } else if (photoTriggerImageBW==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 1));
+      } else if (photoTriggerImage==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 2));
+      }
       showImageCounterAfterSpin ++;
-    } else if (photoTriggerImageRect==true) {
-      spaceImages.add(new SpaceImages(500+random(-20, 20), 
-        random(-height/2+100, height/2-100), 
-        dir, targetSystem.get(0).x, 0));
-    } else if (photoTriggerImageBW==true) {
-      spaceImages.add(new SpaceImages(500+random(-20, 20), 
-        random(-height/2+100, height/2-100), 
-        dir, targetSystem.get(0).x, 1));
-    } else if (photoTriggerImage==true) {
-      spaceImages.add(new SpaceImages(500+random(-20, 20), 
-        random(-height/2+100, height/2-100), 
-        dir, targetSystem.get(0).x, 2));
-    } 
+    } else { 
+      if (photoTriggerImageRect==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 0));
+      } else if (photoTriggerImageBW==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 1));
+      } else if (photoTriggerImage==true) {
+        spaceImages.add(new SpaceImages(500+random(-20, 20), 
+          random(-height/2+100, height/2-100), 
+          dir, targetSystem.get(0).x, 2));
+      }
+    }
     photoTrigger = false;
   } 
 
@@ -99,6 +110,4 @@ void mode1() {
    */
   popMatrix();
   noStroke();
-
-  
 }

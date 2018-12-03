@@ -162,9 +162,9 @@ String CPUperform="";
 // shaba mode 2
 int shabaMode2 = 0;
 void setup() {
-  size(1920, 1080, P3D);
   //size(1920, 1080, P3D);
-  //fullScreen(P3D, 1);
+  //size(1920, 1080, P3D);
+  fullScreen(P3D, 2);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -266,7 +266,7 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 1;
+  phase = 0;
 }
 void draw() {
   //if (frameCount % 10 ==0) {

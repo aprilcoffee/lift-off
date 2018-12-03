@@ -11,8 +11,8 @@ void changSuperShape() {
 
   m = 5;
   n1 = 60;
-  n2 = 100+300*sin(radians(frameCount));
-  n3 = 100;
+  n2 = 150+300*sin(radians(frameCount));
+  n3 = 150;
 }
 float superShape(float theta, float m, float n1, float n2, float n3) {
   float a=1;

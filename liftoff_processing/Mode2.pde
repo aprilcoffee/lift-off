@@ -1,9 +1,9 @@
 
 void mode2(int sphereMode) {
   //if (random(5)>3)
-  if (transiting==false && transition==2) {
+  if (transiting==false)
     background(0);
-  }
+
   pushMatrix();
   colorMode(HSB, 255);
   blendMode(BLEND);
@@ -90,9 +90,12 @@ void mode2(int sphereMode) {
   noStroke();
   if (showHalfTrigger==true) {
     newLonMinHalf = (int)random(total);    
-    newLonMaxHalf = (int)random(total);    
-    if (frameCount*0.001 < 3) {
-      shabaMode2 = int(random(frameCount*0.001));
+    newLonMaxHalf = newLonMinHalf + (int)random(-phase2Counter*0.01, phase2Counter*0.01);    
+    if (newLonMaxHalf > total)newLonMaxHalf=total-1;
+    if (newLonMaxHalf < 0)newLonMaxHalf=0;
+
+    if (phase2Counter*0.001 < 3) {
+      shabaMode2 = int(random(phase2Counter*0.001));
     } else {
       shabaMode2 = int(random(3));
     }
@@ -110,8 +113,6 @@ void mode2(int sphereMode) {
     }
     showHalfTrigger=false;
   }
-
-
   if (showAllgeo==true) {
     for (int i=0; i<total; i++) {
       for (int j=0; j<total; j++) {
@@ -140,23 +141,22 @@ void mode2(int sphereMode) {
           );
       }
     }
-  } else {
-    for (int i=0; i<total*sin(radians(frameCount)); i++) {
-      for (int j=0; j<total; j++) {
-        //for (int i=0; i<total; i++) {
-        //  for (int j=0; j<total; j++) {
-        geometry[i][j].update();
-        geometry[i][j].show(
-          geometry[i+1][j].globeTexture, 
-          geometry[i][j+1].globeTexture, 
-          geometry[i+1][j+1].globeTexture, 
-          shabaMode2
-          );
-      }
-    }
-  }
+  } /*else {
+   for (int i=0; i<total; i++) {
+   for (int j=0; j<total; j++) {
+   //for (int i=0; i<total; i++) {
+   //  for (int j=0; j<total; j++) {
+   geometry[i][j].update();
+   geometry[i][j].show(
+   geometry[i+1][j].globeTexture, 
+   geometry[i][j+1].globeTexture, 
+   geometry[i+1][j+1].globeTexture, 
+   shabaMode2
+   );
+   }
+   }
+   }*/
   endShape(CLOSE);
-
   changSuperShape();
   popMatrix();
   //image(orbitTexture,width/2,height/2,width,height);

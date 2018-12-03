@@ -1,5 +1,5 @@
 void killPhase1() {
   observateStar.clear();
-  targetSystem.clear();
+  //targetSystem.clear();
   spaceImages.clear();
 }
