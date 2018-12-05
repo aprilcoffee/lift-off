@@ -116,6 +116,9 @@ boolean showHalf = false;
 boolean showHalfTrigger = false;
 boolean startMove = false;
 boolean changeTexture = false;
+boolean spinMoveFaster = false;
+boolean starGoCenter = false;
+boolean geoMoving = false;
 PImage[] planetImage;
 int planetImageLength = 6;
 int currentPlanetImage = 0;
@@ -163,8 +166,8 @@ String CPUperform="";
 int shabaMode2 = 0;
 void setup() {
   //size(1920, 1080, P3D);
-  //size(1920, 1080, P3D);
-  fullScreen(P3D, 2);
+  size(2000, 600, P3D);
+  //fullScreen(P3D, 1);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -187,8 +190,6 @@ void setup() {
   }
   MidiBus.list(); // List all available Midi devices on STDOUT. This will show each device's index and name.
   myBus = new MidiBus(this, "LK Mini InControl", "LK Mini InControl"); // Create a new MidiBus with no input device and the default Java Sound Synthesizer as the output device.
-
-
 
   //initPhase
   LTGlogo = loadImage("LTG.png");
@@ -266,7 +267,7 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 0;
+  phase = 1;
 }
 void draw() {
   //if (frameCount % 10 ==0) {
@@ -286,10 +287,10 @@ void draw() {
       println("trans0to1");
       mode1();
       transitionShow1to2();
-      mode2(shabaMode2);
+      mode2();
       break;
     case 3:
-      mode2(shabaMode2);
+      mode2();
       transitionShow2to3();
       mode3();
       break;
@@ -308,7 +309,7 @@ void draw() {
       phase1Counter++;
       break;
     case 2:
-      mode2(shabaMode2);
+      mode2();
       phase2Counter++;
       break;
     case 3:
@@ -316,7 +317,7 @@ void draw() {
       phase3Counter++;
       break;
     case 4:
-      mode4();
+      initPhase();      
       break;
     }
   }

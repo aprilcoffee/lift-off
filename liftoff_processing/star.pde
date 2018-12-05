@@ -28,10 +28,13 @@ class Star {
     //  pz = pos.z;
     //}
     theta = theta + v;
-    if (proportion < 1) {
-      proportion = proportion+proportionV;
-    } else {
-      proportion = 1;
+
+    if (starGoCenter==true) {
+      if (proportion < 1) {
+        proportion = proportion+proportionV;
+      } else {
+        proportion = 1;
+      }
     }
   }
   void show(PGraphics P) {

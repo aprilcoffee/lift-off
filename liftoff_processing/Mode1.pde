@@ -10,32 +10,35 @@ void mode1() {
   }
 
   if (waterTrigger==true) {
-    float targetX=map(targetSystem.get(0).x, -width/2, width/2, 0, 640);
-    float targetY=map(targetSystem.get(1).y, -height/2, height/2, 0, 480);
+    float targetX=map(targetSystem.get(0).x, -width/2-5, width/2+5, 0, 640);
+    float targetY=map(targetSystem.get(1).y, -height/2-5, height/2+5, 0, 480);
     previousWater[(int)targetX][(int)targetY] = waterCount;
     waterCount += 3;
     if (waterCount>255)waterCount=255;
     waterTrigger=false;
     targetCount++;
   }
-  image(waterRipple, 0, 0, width, height);
+  imageMode(CENTER);
+  image(waterRipple, 0, 0, width+10, height+10);
   //spaceImageGraphic.clear();
   for (int s=0; s<targetSystem.size(); s++) {
     targetSystem.get(s).update();
     targetSystem.get(s).showBall();
   }
   rectMode(CENTER);
-  imageMode(CENTER);
   stroke(255, 100);
   strokeWeight(0.5);
   noFill();
   for (int s=0; s<spaceImages.size(); s++) {
-    spaceImages.get(s).update(); 
+    spaceImages.get(s).update();
     spaceImages.get(s).showImage();
 
     if (spaceImages.get(s).imageSizeY<12) {
       spaceImages.remove(s);
     }
+  }
+  if (spinMoveFaster) {
+    spinMoveFaster=false;
   }
   if (photoTrigger==true) {
     int dir = 0;
@@ -55,15 +58,15 @@ void mode1() {
     if (phase1CornerCall==true) {
       if (photoTriggerImageRect==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          targetSystem.get(0).y, 
           dir, targetSystem.get(0).x, 0));
       } else if (photoTriggerImageBW==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          targetSystem.get(0).y, 
           dir, targetSystem.get(0).x, 1));
       } else if (photoTriggerImage==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          targetSystem.get(0).y, 
           dir, targetSystem.get(0).x, 2));
       }
       showImageCounterAfterSpin ++;

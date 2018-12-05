@@ -175,6 +175,7 @@ class SpaceImages {
   float spinRadians;
   float textEasing = 0.3; 
   int imageMode = 0;
+  float spinAdjustOri;
   SpaceImages(float ex, float ey, int edir, float targetX, int eimageMode) {
     photoX = ex;
     photoY = ey;
@@ -193,10 +194,12 @@ class SpaceImages {
     // 0 blank 1 BWImg 2 colImg 3 spin
     if (photoSpin == true) {
       spin = 90 + random(showImageCounterAfterSpin);
-      spinAdjust = random(2);
+      spinAdjust = random(0.1, 0.5);
+      spinAdjustOri = spinAdjust;
     } else {
       spin = 90;
       spinAdjust = 0;
+      spinAdjustOri = spinAdjust;
     }
   }
   void update() {
@@ -207,7 +210,12 @@ class SpaceImages {
     }
     photoX = spinRadians*sin(radians(spin));
     photoZ = spinRadians*cos(radians(spin));
-    spin += spinAdjust;
+    if (spinMoveFaster==true) {
+      spinAdjust *= 4;
+    } else {
+      spinAdjust += (spinAdjustOri-spinAdjust)*0.3;
+      spin += spinAdjust;
+    }
     photoXOri += (photoX - photoXOri)*textEasing;
     photoYOri += (photoY - photoYOri)*textEasing;
   }
@@ -219,8 +227,13 @@ class SpaceImages {
     pushMatrix();
     translate(photoX, photoY, photoZ);
 
-
-    if (glitchTrigger==true) {
+    if (phase1CornerCall==true || photoSpin==true) {
+      if (imageMode == 1) {
+        image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
+      } else if (imageMode == 2) {
+        image(spaceImg[imageFlag], 0, 0, imageSizeX, imageSizeY);
+      }
+    } else if (glitchTrigger==true) {
       if (imageMode == 1) {
         image(imageGlitch(spaceImgBW[imageFlag]), 0, 0, imageSizeX, imageSizeY);
       } else if (imageMode == 2) {

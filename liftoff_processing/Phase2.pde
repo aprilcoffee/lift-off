@@ -3,15 +3,18 @@ float m =5;
 float n1 = 300;
 float n2 = 400;
 float n3 = 100;
+int geoCount=0;
 void changSuperShape() {
-  m = 3;
-  n1 = 3;
-  n2 = 4+3.53*cos(radians(frameCount*6));
-  n3 = 1.732+5*sin(radians(frameCount/7.3));
-
+  //m = 3;
+  //n1 = 3;
+  //n2 = 4+3.53*cos(radians(frameCount*6));
+  //n3 = 1.732+5*sin(radians(frameCount/7.3));
+  if (geoMoving==true) {
+    geoCount+=10;
+  }
   m = 5;
   n1 = 60;
-  n2 = 150+300*sin(radians(frameCount));
+  n2 = 150+300*sin(radians(geoCount));
   n3 = 150;
 }
 float superShape(float theta, float m, float n1, float n2, float n3) {
@@ -32,9 +35,10 @@ float superShape(float theta, float m, float n1, float n2, float n3) {
 }
 void orbitTextureDraw(PGraphics P) {
   P.beginDraw();
-  //P.clear();
+  P.tint(255);
+  P.background(0, 0);
   if (changeTexture==true) {
-    currentPlanetImage = (int)random(6);
+    currentPlanetImage = (int)random(5);
     changeTexture = false;
   }
   P.image(planetImage[currentPlanetImage], 0, 0, P.width, P.height);
@@ -137,6 +141,7 @@ class Geometry {
     }
   }
   void show(PVector tempRight, PVector tempDown, PVector tempRightDown, int showMode) {
+
     if (showMode == 0) {
       noFill();
     } else if (showMode == 1) {
@@ -145,11 +150,15 @@ class Geometry {
       fill(255, 100);
     }
     pushMatrix();
-    if (showMode == 1) {
+
+    if (showMode == 1 && textureOn!=true) {
       beginShape(POINTS);
     } else {
       beginShape(TRIANGLE_STRIP);
     }
+
+
+
     if (textureOn==true) {
       texture(orbitTexture);
     } else {
@@ -166,13 +175,13 @@ class Geometry {
     vertex(globe[0].x, globe[0].y, globe[0].z, globeTexture.y, globeTexture.x);
     vertex(globe[1].x, globe[1].y, globe[1].z, tempRight.y, tempRight.x);
     vertex(globe[2].x, globe[2].y, globe[2].z, tempDown.y, tempDown.x);
-    //endShape(CLOSE);
+    endShape(CLOSE);
 
-    //if (showMode == 1) {
-    //  beginShape(POINTS);
-    //} else {
-    //  beginShape();
-    //}
+    if (showMode == 1&&textureOn!=true) {
+      beginShape(POINTS);
+    } else {
+      beginShape(TRIANGLE_STRIP);
+    }
     if (textureOn==true) {
       texture(orbitTexture);
     } else {

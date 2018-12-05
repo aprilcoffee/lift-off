@@ -1,3 +1,12 @@
+void mode3A(){
+  
+}
+void mode3B(){
+  
+}
+void mode3C(){
+  
+}
 void julia(PGraphics P) {
   float ca = sin(radians(juliaAngle))/1.3;
   float cb = cos(radians(juliaAngle*2.13))/1.7;
@@ -166,8 +175,7 @@ class Particle {
   PVector pos;
   PVector prevPos;
   ArrayList<PVector> trace;
-  int traceLength = 10;
-
+  int traceLength = 50;
   PVector vel;
   PVector acc;
 
@@ -199,20 +207,20 @@ class Particle {
     //line(pos.x, pos.y, prevPos.x, prevPos.y);
     //colorMode(HSB, 255);
     //blendMode(ADD);
-    int showLength = (int)map(constrain(fftLin.getAvg(0)*spectrumScale, 0, 400), 0, 400, 0, trace.size());
+    int showLength = (int)map(constrain(totalAmp, 0, 10000), 0, 10000, 0, trace.size());
     //println(fftLin.getAvg(0));
     for (int s=traceLength-1; s>traceLength-showLength; s--) {
       if (colorCode<6) {
         colorMode(HSB);
         stroke( 
-          map(s, traceLength-showLength, traceLength, 80, 120), 
+          map(s, traceLength-showLength, traceLength, 80,map(fftLin.getAvg(10)*spectrumScale,0,400,0,255)), 
           map(s, traceLength-showLength, traceLength, 0, 120), 
           map(s, traceLength-showLength, traceLength, 50, 140), 
           map(s, traceLength-showLength, traceLength, 50, 200));
       } else {
         stroke( 
           map(s, traceLength-showLength, traceLength, 200, 255), 
-          map(s, traceLength-showLength, traceLength, 0, 120), 
+          map(s, traceLength-showLength, traceLength, 0, map(fftLin.getAvg(12)*spectrumScale,0,400,0,255)), 
           map(s, traceLength-showLength, traceLength, 50, 120), 
           map(s, traceLength-showLength, traceLength, 50, 200));
       }

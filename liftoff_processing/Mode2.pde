@@ -1,5 +1,5 @@
 
-void mode2(int sphereMode) {
+void mode2() {
   //if (random(5)>3)
   if (transiting==false)
     background(0);
@@ -12,7 +12,7 @@ void mode2(int sphereMode) {
     starTriggerCount++;
     if (starTriggerCount > 1000)starTriggerCount=1000;
     for (int s=0; s<(starTriggerCount/100) + 1; s++) {
-      stars.add(new Star(10, phase2Counter*0.0001));
+      stars.add(new Star(10, phase2Counter*0.000001));
     }
     addStarTrigger=false;
   }
@@ -34,8 +34,10 @@ void mode2(int sphereMode) {
   starField.endDraw();
   imageMode(CENTER);
   translate(width/2, height/2);
+  hint(DISABLE_DEPTH_TEST);
   //rotate(radians(frameCount));
   image(starField, 0, 0, width, height);
+  
   phase3moveA=89*sin(radians(frameCount*2.173));
   phase3moveT=89*sin(radians(frameCount*0.489));
   // lights();
@@ -44,6 +46,7 @@ void mode2(int sphereMode) {
   float camY = camR * sin(radians(phase3moveT));
   float camZ = camR * cos(radians(phase3moveA)*cos(radians(phase3moveT)));
   camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+
   orbitTextureDraw(orbitTexture);
   //drawTerrainInGraphics(orbitTexture);
   resetSphereLocation();
@@ -89,8 +92,12 @@ void mode2(int sphereMode) {
    }*/
   noStroke();
   if (showHalfTrigger==true) {
-    newLonMinHalf = (int)random(total);    
-    newLonMaxHalf = newLonMinHalf + (int)random(-phase2Counter*0.01, phase2Counter*0.01);    
+    newLonMinHalf = (int)random(total);  
+    int tempMax;
+    if (random(2)<1) {
+      tempMax = int(phase2Counter*0.01);
+    }else tempMax = -int(phase2Counter*0.01);
+    newLonMaxHalf = newLonMinHalf + tempMax;    
     if (newLonMaxHalf > total)newLonMaxHalf=total-1;
     if (newLonMaxHalf < 0)newLonMaxHalf=0;
 
@@ -113,6 +120,7 @@ void mode2(int sphereMode) {
     }
     showHalfTrigger=false;
   }
+  
   if (showAllgeo==true) {
     for (int i=0; i<total; i++) {
       for (int j=0; j<total; j++) {

@@ -56,5 +56,6 @@ void mode3() {
    filter(INVERT);
    }*/
 }
-void mode4() {
+void mode4(){
+  
 }

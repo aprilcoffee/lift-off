@@ -71,6 +71,9 @@ public void test(int theA, int theB) {
       glitchTrigger = false;
       glitchReset();
       break;
+    case 14:
+      spinMoveFaster=true;
+      break;
     }
   } 
   /*
@@ -97,6 +100,10 @@ public void test(int theA, int theB) {
       showAllgeo = true;
     } else if (theB == 5) {
       startMove = true;
+    } else if (theB == 6) {
+      starGoCenter = true;
+    }else if (theB == 7) {
+      geoMoving = true;
     }
   } else if (theA==3) {
     if (theB==0) {
@@ -174,6 +181,17 @@ void soundCheck() {
   fftLin.forward( in.mix );
   //fftLog.forward( in.mix );
 
+  pushMatrix();
+  translate(0, height/2);
+  stroke(1);
+  for (int i = 0; i < in.bufferSize() - 1; i++)
+  {
+    line( i, 50 + in.left.get(i)*200, i+1, 50 + in.left.get(i+1)*200 );
+    line( i, 150 + in.right.get(i)*200, i+1, 150 + in.right.get(i+1)*200 );
+    totalAmp += abs(in.mix.get(i)*100);
+  }
+  popMatrix();
+
   int w = int( width/fftLin.avgSize() );
   for (int i = 0; i < fftLin.avgSize(); i++)
   {
@@ -199,8 +217,11 @@ void soundCheck() {
     {
       fill(255, 0, 0, 255);
       textAlign(LEFT);
-      textSize(40);
+      textSize(25);
+      text("Logarithmic Average Center Amplitude: " + totalAmp, 5, height-200 - 75);
+      text("Logarithmic Average Center Index: " + i, 5, height-200 - 50);
       text("Logarithmic Average Center Frequency: " + centerFrequency, 5, height-200 - 25);
+
       fill(255, 0, 0);
     } else
     {
@@ -215,15 +236,6 @@ void soundCheck() {
   }
 
 
-  pushMatrix();
-  translate(0, height/2);
-  stroke(0);
-  for (int i = 0; i < in.bufferSize() - 1; i++)
-  {
-    line( i, 50 + in.left.get(i)*200, i+1, 50 + in.left.get(i+1)*200 );
-    line( i, 150 + in.right.get(i)*200, i+1, 150 + in.right.get(i+1)*200 );
-    totalAmp += abs(in.mix.get(i)*100);
-  }
-  popMatrix();
+
   //println(totalAmp);
 }
