@@ -10,9 +10,9 @@ void mode2() {
   camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
   if (addStarTrigger == true) {
     starTriggerCount++;
-    if (starTriggerCount > 1000)starTriggerCount=1000;
+    if (starTriggerCount > 1550)starTriggerCount=1550;
     for (int s=0; s<(starTriggerCount/100) + 1; s++) {
-      stars.add(new Star(10, phase2Counter*0.000001));
+      stars.add(new Star(10, phase2Counter*0.0001));
     }
     addStarTrigger=false;
   }
@@ -37,7 +37,7 @@ void mode2() {
   hint(DISABLE_DEPTH_TEST);
   //rotate(radians(frameCount));
   image(starField, 0, 0, width, height);
-  
+
   phase3moveA=89*sin(radians(frameCount*2.173));
   phase3moveT=89*sin(radians(frameCount*0.489));
   // lights();
@@ -50,77 +50,94 @@ void mode2() {
   orbitTextureDraw(orbitTexture);
   //drawTerrainInGraphics(orbitTexture);
   resetSphereLocation();
-  if (flyAway==true) {
-    for (int s=0; s<20; s++) {
-      flyI = (int)random(total);
-      flyJ = (int)random(total);
-      geometry[flyI][flyJ].flying=true;
-      flyAway=false;
-    }
-  }
-  /*
-  if (crashSide==true) {
-   int newLonMin = (int)random(total);    
-   int newLonMax = (int)random(total);    
-   
-   if (newLonMin > newLonMax) {
-   int temp = newLonMin;
-   newLonMin = newLonMax;
-   newLonMax = temp;
-   }
-   int newLatMin = (int)random(total);    
-   int newLatMax = (int)random(total);
-   if (newLatMin > newLatMax) {
-   int temp = newLatMin;
-   newLatMin = newLatMax;
-   newLatMax = temp;
-   }
-   float temp_newR = random(300, 700);
-   for (int i=newLatMin; i<newLatMax; i++) {
-   float lat = map(i, 0, total, -HALF_PI, HALF_PI);
-   float r2 = superShape(lat, m, n1, n2, n3);
-   for (int j=newLonMin; j<newLonMax; j++) {
-   // lat -Pi/2 ~ Pi/2
-   // lon -PI ~ PI
-   float lon = map(j, 0, total, -PI, PI);
-   float r1 = superShape(lon, m, n1, n2, n3);
-   geometry[i][j].setNewLocation(r1, r2, i, j, temp_newR+random(-20, 20));
-   }
-   }
-   println("Hello");
-   crashSide = false;
-   }*/
-  noStroke();
-  if (showHalfTrigger==true) {
-    newLonMinHalf = (int)random(total);  
-    int tempMax;
-    if (random(2)<1) {
-      tempMax = int(phase2Counter*0.01);
-    }else tempMax = -int(phase2Counter*0.01);
-    newLonMaxHalf = newLonMinHalf + tempMax;    
-    if (newLonMaxHalf > total)newLonMaxHalf=total-1;
-    if (newLonMaxHalf < 0)newLonMaxHalf=0;
 
-    if (phase2Counter*0.001 < 3) {
-      shabaMode2 = int(random(phase2Counter*0.001));
-    } else {
-      shabaMode2 = int(random(3));
+  if (explosion==true) {
+    for (int i=0; i<total; i++) {
+      float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+      float r2 = superShape(lat, m, n1, n2, n3);
+      for (int j=0; j<total; j++) {
+        // lat -Pi/2 ~ Pi/2
+        // lon -PI ~ PI
+        float lon = map(j, 0, total, -PI, PI);
+        float r1 = superShape(lon, m, n1, n2, n3);
+        geometry[i][j].exploded(r1, r2, i, j);
+      }
     }
-    if (newLonMinHalf > newLonMaxHalf) {
-      int temp = newLonMinHalf;
-      newLonMinHalf = newLonMaxHalf;
-      newLonMaxHalf = temp;
+  } else {
+    if (flyAway==true) {
+      flyingAwayCount +=10;
+      if (flyingAwayCount >= (total-20)*(total-20))flyingAwayCount = (total-20)*(total-20);
+      for (int s=0; s<flyingAwayCount; s++) {
+        flyI = (int)random(total);
+        flyJ = (int)random(total);
+        geometry[flyI][flyJ].flying=true;
+        flyAway=false;
+      }
     }
-    newLatMinHalf = (int)random(total);    
-    newLatMaxHalf = (int)random(total);
-    if (newLatMinHalf > newLatMaxHalf) {
-      int temp = newLatMinHalf;
-      newLatMinHalf = newLatMaxHalf;
-      newLatMaxHalf = temp;
+    noStroke();
+    if (crashSide==true) {
+      //resetSphereLocation();
+      int newLonMin = (int)random(total);    
+      int newLonMax = (int)random(total);    
+
+      if (newLonMin > newLonMax) {
+        int temp = newLonMin;
+        newLonMin = newLonMax;
+        newLonMax = temp;
+      }
+      int newLatMin = (int)random(total);    
+      int newLatMax = (int)random(total);
+      if (newLatMin > newLatMax) {
+        int temp = newLatMin;
+        newLatMin = newLatMax;
+        newLatMax = temp;
+      }
+      float temp_newR = geometryR + random(1500, 3000);
+      for (int i=newLatMin; i<newLatMax; i++) {
+        float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+        float r2 = superShape(lat, m, n1, n2, n3);
+        for (int j=newLonMin; j<newLonMax; j++) {
+          // lat -Pi/2 ~ Pi/2
+          // lon -PI ~ PI
+          float lon = map(j, 0, total, -PI, PI);
+          float r1 = superShape(lon, m, n1, n2, n3);
+          geometry[i][j].setNewLocation(r1, r2, i, j, temp_newR+random(-20, 20));
+        }
+      }
+      println("Hello");
+      crashSide = false;
     }
-    showHalfTrigger=false;
+    //noStroke();
+    else if (showHalfTrigger==true) {
+      newLonMinHalf = (int)random(total);  
+      int tempMax;
+      if (random(2)<1) {
+        tempMax = int(phase2Counter*0.01);
+      } else tempMax = -int(phase2Counter*0.01);
+      newLonMaxHalf = newLonMinHalf + tempMax;    
+      if (newLonMaxHalf > total)newLonMaxHalf=total-1;
+      if (newLonMaxHalf < 0)newLonMaxHalf=0;
+
+      if (phase2Counter*0.001 < 3) {
+        shabaMode2 = int(random(phase2Counter*0.001));
+      } else {
+        shabaMode2 = int(random(3));
+      }
+      if (newLonMinHalf > newLonMaxHalf) {
+        int temp = newLonMinHalf;
+        newLonMinHalf = newLonMaxHalf;
+        newLonMaxHalf = temp;
+      }
+      newLatMinHalf = (int)random(total);    
+      newLatMaxHalf = (int)random(total);
+      if (newLatMinHalf > newLatMaxHalf) {
+        int temp = newLatMinHalf;
+        newLatMinHalf = newLatMaxHalf;
+        newLatMaxHalf = temp;
+      }
+      showHalfTrigger=false;
+    }
   }
-  
   if (showAllgeo==true) {
     for (int i=0; i<total; i++) {
       for (int j=0; j<total; j++) {
@@ -149,7 +166,24 @@ void mode2() {
           );
       }
     }
-  } /*else {
+  }
+
+
+  if (resetGeoLocation==true) { 
+    for (int i=0; i<total; i++) {
+      float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+      float r2 = superShape(lat, m, n1, n2, n3);
+      for (int j=0; j<total; j++) {
+        // lat -Pi/2 ~ Pi/2
+        // lon -PI ~ PI
+        float lon = map(j, 0, total, -PI, PI);
+        float r1 = superShape(lon, m, n1, n2, n3);
+        geometry[i][j].resetLocation(r1, r2, i, j);
+      }
+    }
+    resetGeoLocation=false;
+  }
+  /*else {
    for (int i=0; i<total; i++) {
    for (int j=0; j<total; j++) {
    //for (int i=0; i<total; i++) {

@@ -1,61 +1,35 @@
 void mode3() { 
   julia(juliaTexture);
-  pushMatrix();
   colorMode(RGB, 255);
   blendMode(SUBTRACT);  
-  background(255);
-  float movementScale = spectrumScale ;
+  //background(0);
+  if (transiting==false)
+    background(255);
   float shakeGlitch = map(totalAmp, 0, 100000, 0, 15);
-  println(totalAmp);
+  //println(totalAmp);
   //if (random(shakeGlitch)<5) {
   //}
-  soundCheck();
-  stroke(255);
-  strokeWeight(1);
+  soundCheck();  
+  camera(100*sin(radians(frameCount)), 0, 1000, 0, 0, 0, 0, 1, 0);
 
-  for (int i=0; i<attractorsSize; i++) {
-    point(attractors[i].x, attractors[i].y);
+  if (phase3ShowBalls) {
+    mode3A();
   }
-  attractors[0].x = width/2+fftLin.getAvg(0)*movementScale*5;
-  attractors[0].y = height/2+fftLin.getAvg(3)*movementScale*2;
-  attractors[1].x = width/2-fftLin.getAvg(0)*movementScale*5;
-  attractors[1].y = height/2-fftLin.getAvg(3)*movementScale*2;
-
-  if (attractors[0].x>width)attractors[0].x = width+random(-30, 30);
-  if (attractors[0].y>height)attractors[0].y = height+random(-30, 30);
-  if (attractors[1].x<0)attractors[1].x = random(-30, 30);
-  if (attractors[1].y<0)attractors[1].y = random(-30, 30);
-  //  attractors[1].z = 50*sin(radians(frameCount*2));
-
-  for (int s=0; s< particles.size(); s++) {
-    for (int i=0; i<attractorsSize; i++) {
-      particles.get(s).attracted(attractors[i], i);
-    }
-    particles.get(s).update();
-    particles.get(s).show();
+  if (phase3ShowTerrain) {
+    mode3B();
   }
-  //drawTerrain();
-  popMatrix();  
-  /*
-   translate(width/2, height/2);
-   for (int s=0; s<blobs.size(); s++) {
-   blobs.get(s).update();
-   blobs.get(s).show();
-   blobs.get(s).cons();
-   }
-   imageMode(CENTER);
-   */
+  if (phase3ShowAttrator) {
+    mode3C();
+  }
+
+  camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
   if (juliaShowTrigger) {
     tint(100);
+    imageMode(CORNER);
     image(juliaTexture, 0, 0, width, height);
     juliaShowTrigger=false;
     tint(255);
   }
-  /*
-  if (bobbyTrigger) {
-   filter(INVERT);
-   }*/
 }
-void mode4(){
-  
+void mode4() {
 }

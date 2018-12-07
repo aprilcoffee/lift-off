@@ -1,11 +1,45 @@
-void mode3A(){
-  
+void mode3A() {
+  for (int i=0; i<ballCollection.size(); i++) {
+    Ball mb = (Ball) ballCollection.get(i);
+    mb.run();
+  }
+  theta += (0.0523/2);
+  if (moveStuff==true) {
+    createStuff();
+    moveStuff=false;
+  }
 }
-void mode3B(){
-  
+void mode3B() {  
+  drawTerrain();
 }
-void mode3C(){
-  
+void mode3C() {
+  float movementScale = spectrumScale ;
+  pushMatrix();
+  stroke(255);
+  strokeWeight(1);
+
+  for (int i=0; i<attractorsSize; i++) {
+    point(attractors[i].x, attractors[i].y);
+  }
+  attractors[0].x = width/2+fftLin.getAvg(0)*movementScale*5;
+  attractors[0].y = height/2+fftLin.getAvg(3)*movementScale*2;
+  attractors[1].x = width/2-fftLin.getAvg(0)*movementScale*5;
+  attractors[1].y = height/2-fftLin.getAvg(3)*movementScale*2;
+
+  if (attractors[0].x>width)attractors[0].x = width+random(-30, 30);
+  if (attractors[0].y>height)attractors[0].y = height+random(-30, 30);
+  if (attractors[1].x<0)attractors[1].x = random(-30, 30);
+  if (attractors[1].y<0)attractors[1].y = random(-30, 30);
+  //  attractors[1].z = 50*sin(radians(frameCount*2));
+
+  for (int s=0; s< particles.size(); s++) {
+    for (int i=0; i<attractorsSize; i++) {
+      particles.get(s).attracted(attractors[i], i);
+    }
+    particles.get(s).update();
+    particles.get(s).show();
+  }
+  popMatrix();
 }
 void julia(PGraphics P) {
   float ca = sin(radians(juliaAngle))/1.3;
@@ -213,14 +247,14 @@ class Particle {
       if (colorCode<6) {
         colorMode(HSB);
         stroke( 
-          map(s, traceLength-showLength, traceLength, 80,map(fftLin.getAvg(10)*spectrumScale,0,400,0,255)), 
+          map(s, traceLength-showLength, traceLength, 80, map(fftLin.getAvg(10)*spectrumScale, 0, 400, 0, 255)), 
           map(s, traceLength-showLength, traceLength, 0, 120), 
           map(s, traceLength-showLength, traceLength, 50, 140), 
           map(s, traceLength-showLength, traceLength, 50, 200));
       } else {
         stroke( 
           map(s, traceLength-showLength, traceLength, 200, 255), 
-          map(s, traceLength-showLength, traceLength, 0, map(fftLin.getAvg(12)*spectrumScale,0,400,0,255)), 
+          map(s, traceLength-showLength, traceLength, 0, map(fftLin.getAvg(12)*spectrumScale, 0, 400, 0, 255)), 
           map(s, traceLength-showLength, traceLength, 50, 120), 
           map(s, traceLength-showLength, traceLength, 50, 200));
       }
@@ -320,6 +354,7 @@ void drawTerrainInGraphics(PGraphics P) {
 
 
 void drawTerrain() {
+  pushMatrix();
   for (int y = rows-1; y >= 1; y--) {
     for (int x = 0; x < cols; x++) {  
       terrainLeft[x][y] = terrainLeft[x][y-1];
@@ -333,8 +368,7 @@ void drawTerrain() {
     terrainRight[x][0] = in.right.get(x)*150;
     audioAmp[0]+=abs(fftLin.getBand(x*5))*15;//renew Amount of Sound
   }
-  camera(0, -100, 1000, 0, 0, 0, 0, 1, 0);
-  translate(0, 300);
+  translate(0, 0);
   //println(audioAmp[0]);
   //background(255); 
   //blendMode(ADD);
@@ -343,24 +377,29 @@ void drawTerrain() {
   pushMatrix();
   //noFill();
   //fill(255,0,0);
-  //translate(-300, 0);
+  translate(-300, 0);
   rotateX(PI/2);
   scale(2, 1);
   //translate(-w/2, -h/2); //*****Move a little
+
   for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
-    if (audioAmp[y]>5000) {
+    if (audioAmp[y]>1500) {
       stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
-      println(audioAmp[y]);
+      //println(audioAmp[y]);
     } else {
-      println(audioAmp[y]);
+
+      //println(audioAmp[y]);
       stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
     }
-    beginShape(TRIANGLE_STRIP);
-    for (int x = 0; x < cols; x+=3) {
+    beginShape(POINT);
+    for (int x = 0; x < cols; x++) {
       //noStroke();
-      //fill(audioAmp[y], audioAmp[y], audioAmp[y], 100);
-      noFill();
-      stroke(255);
+      //fill(255,0,0);
+      stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+      //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+      //fill(255);
+      point(x*scl, y*scl, terrainLeft[x][y]);
+      point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
       vertex(x*scl, y*scl, terrainLeft[x][y]);
       vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
     }
@@ -371,28 +410,117 @@ void drawTerrain() {
   //-------------------terrain2-------------------
 
   pushMatrix();
-  //translate(300, 0);
+  translate(300, 0);
   rotateX(PI/2);
   scale(2, 1);
 
   for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
-    if (audioAmp[y]>5000) {
+    if (audioAmp[y]>1500) {
       stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
-      println(audioAmp[y]);
+      //println(audioAmp[y]);
     } else {
-      println(audioAmp[y]);
+      //println(audioAmp[y]);
       stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
     }
-    beginShape(TRIANGLE_STRIP);
-    for (int x = 0; x < cols; x+=3) {
+    beginShape(POINT);
+    for (int x = 0; x < cols; x++) {
       //noStroke();
-      //fill(map(audioAmp[y],0,20000,0,255), audioAmp[y], audioAmp[y], 50);
-      noFill();
-      stroke(255);
+      //noFill();
+      stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+      //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+      //stroke(100);
+      //fill(100);
+
+      point(-x*scl, y*scl, terrainRight[x][y]);
+      point(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
       vertex(-x*scl, y*scl, terrainRight[x][y]);
       vertex(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
     }
     endShape();
   }
   popMatrix();
+  popMatrix();
+}
+
+void createStuff() {
+  ballCollection.clear();
+  for (int i=0; i<totalBallNum; i++) {
+    float tempX, tempY;
+    float R=random(200);
+    tempX = R*cos(radians(random(360)));
+    tempY = R*sin(radians(random(360)));
+    PVector org = new PVector(tempX, tempY);
+    float radius = random(20, 80);
+    PVector loc = new PVector(org.x+radius, org.y);
+    float offSet = random(TWO_PI);
+    int dir = 1;
+    float r = random(1);
+    if (r>0.5) dir =-1;
+
+    Ball myBall = new Ball(org, loc, radius, dir, offSet);
+    ballCollection.add(myBall);
+  }
+}
+class Ball {
+  PVector org, loc;
+  float sz = 2;
+  float radius, offSet, a, c;
+  float[] col = new float[totalBallNum];
+  int s, dir, countC, d = 40;
+  boolean[] connection = new boolean[totalBallNum];
+
+  Ball(PVector _org, PVector _loc, float _radius, int _dir, float _offSet) {
+    org = _org;
+    loc = _loc;
+    radius = _radius;
+    dir = _dir;
+    offSet = _offSet;
+  }
+
+  void run() {
+    display();
+    move();
+    lineBetween();
+  }
+
+  void move() {
+    if (moveYes==true) {
+      loc.x = org.x + sin(theta*dir+offSet)*radius+tan(theta*dir);
+      loc.y = org.y + cos(theta*dir+offSet)*radius+tan(theta*dir);
+    } else {
+      loc.x = org.x + sin(theta*dir+offSet)*radius;//+tan(theta*dir);
+      loc.y = org.y + cos(theta*dir+offSet)*radius;//+tan(theta*dir);
+    }
+  }
+  void lineBetween() {
+    countC = 1;
+    for (int i=0; i<ballCollection.size(); i++) {
+      Ball other = (Ball) ballCollection.get(i);
+      float distance = loc.dist(other.loc);
+      if (distance >0 && distance < d) {
+        connection[i] = true;
+      } else {
+        connection[i] = false;
+      }
+      if (connection[i]) countC++;
+      //println(countC);
+      if (distance >0 && distance < d) {
+        a = map(countC, 1, 20, 10, 150);
+        stroke(#ffffff, a);
+        //strokeWeight(c);
+        line(loc.x, loc.y, other.loc.x, other.loc.y);
+        stroke(#ffffff, a/10);
+        rectMode(CENTER);
+        rect(loc.x, loc.y, 2, 2);
+        colorMode(RGB);
+      }
+    }
+    //println(countC);
+  }
+  void display() {
+    rectMode(CENTER);
+    noStroke();
+    fill(255, a);
+    ellipse(loc.x, loc.y, sz*a, sz);
+  }
 }

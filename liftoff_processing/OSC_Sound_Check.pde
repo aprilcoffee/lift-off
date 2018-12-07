@@ -1,11 +1,9 @@
 public void mode(int theA) {
   transition = theA;
   transiting = true;
-}
-public void initVideo(int theA) {
-  println("Hi");
-  initVideoTrigger = true;
-  initVideoPlaying = true;
+  for (int s=0; s<16; s++) {
+    midiBusing[s]=false;
+  }
 }
 public void test(int theA, int theB) {
   /*
@@ -87,34 +85,83 @@ public void test(int theA, int theB) {
    startMove
    */
   else if (theA==2) {
-    if (theB==0) {
+    switch(theB) {
+    case 0:        
       addStarTrigger=true;
-    } else if (theB == 1) {
+      break;
+    case 1:
       showHalf =true; //together
       showHalfTrigger=true; //together
-    } else if (theB == 2) {
+      break;
+    case 2:
       changeTexture = true;
-    } else if (theB == 3) {
+      break;
+    case 3:
       textureOn = true;
-    } else if (theB == 4) {
+      break;
+    case 4:
       showAllgeo = true;
-    } else if (theB == 5) {
+      break;
+    case 5:
       startMove = true;
-    } else if (theB == 6) {
+      break;
+    case 6:
       starGoCenter = true;
-    }else if (theB == 7) {
+      break;
+    case 7:
       geoMoving = true;
+      break;
+    case 8:
+      crashSide = true;
+      break;    
+    case 9:
+      flyAway = true;
+      break;  
+    case 10:
+      resetGeoLocation = true;
+      textureOn=false;
+      break;
+    case 11:
+      explosion = true;
+      break;
     }
   } else if (theA==3) {
     if (theB==0) {
-      if (bobbyTrigger==false)
-        bobbyTrigger = true;
-      else
-        bobbyTrigger = false;
+      changeTerrainMode = true;
+      moveStuff = true;
     } else if (theB==1) {
       juliaShowTrigger = true;
     }
   }
+}
+
+public void con(int theA, int theB, int theC) {
+  println(theA,theB,theC);
+  if (theA==3) {
+    switch (theB) {
+    case 3:
+      phase3ShowBalls = returnOSC(theC);
+      break;
+    case 4:
+      phase3ShowTerrain = returnOSC(theC);
+      break;
+    case 5:
+      phase3ShowAttrator = returnOSC(theC);
+      break;
+    case 6:
+      break;
+    case 7:
+      break;
+    case 8:
+      break;
+    case 9:
+      break;
+    }
+  }
+}
+boolean returnOSC(int input) {
+  if (input==0)return false;
+  else return true;
 }
 
 void noteOff(int channel, int pitch, int velocity) {
@@ -186,8 +233,8 @@ void soundCheck() {
   stroke(1);
   for (int i = 0; i < in.bufferSize() - 1; i++)
   {
-    line( i, 50 + in.left.get(i)*200, i+1, 50 + in.left.get(i+1)*200 );
-    line( i, 150 + in.right.get(i)*200, i+1, 150 + in.right.get(i+1)*200 );
+    //line( i, 50 + in.left.get(i)*200, i+1, 50 + in.left.get(i+1)*200 );
+    //line( i, 150 + in.right.get(i)*200, i+1, 150 + in.right.get(i+1)*200 );
     totalAmp += abs(in.mix.get(i)*100);
   }
   popMatrix();
@@ -213,26 +260,26 @@ void soundCheck() {
 
     // if the mouse is inside of this average's rectangle
     // print the center frequency and set the fill color to red
-    if ( mouseX >= xl && mouseX < xr )
-    {
-      fill(255, 0, 0, 255);
-      textAlign(LEFT);
-      textSize(25);
-      text("Logarithmic Average Center Amplitude: " + totalAmp, 5, height-200 - 75);
-      text("Logarithmic Average Center Index: " + i, 5, height-200 - 50);
-      text("Logarithmic Average Center Frequency: " + centerFrequency, 5, height-200 - 25);
-
-      fill(255, 0, 0);
-    } else
-    {
-      fill(30);
-    }
-    // draw a rectangle for each average, multiply the value by spectrumScale so we can see it better
-    stroke(50);
-    rect( xl, height-200, xr, height-200 - fftLin.getAvg(i)*spectrumScale );
-    textAlign(LEFT);
-    textSize(15);
-    text(nfc(fftLin.getAvg(i)*spectrumScale, 3), i*w, height-100);
+    /*if ( mouseX >= xl && mouseX < xr )
+     {
+     fill(255, 0, 0, 255);
+     textAlign(LEFT);
+     textSize(25);
+     text("Logarithmic Average Center Amplitude: " + totalAmp, 5, height-200 - 75);
+     text("Logarithmic Average Center Index: " + i, 5, height-200 - 50);
+     text("Logarithmic Average Center Frequency: " + centerFrequency, 5, height-200 - 25);
+     
+     fill(255, 0, 0);
+     } else
+     {
+     fill(30);
+     }
+     // draw a rectangle for each average, multiply the value by spectrumScale so we can see it better
+     stroke(50);
+     rect( xl, height-200, xr, height-200 - fftLin.getAvg(i)*spectrumScale );
+     textAlign(LEFT);
+     textSize(15);
+     text(nfc(fftLin.getAvg(i)*spectrumScale, 3), i*w, height-100);*/
   }
 
 

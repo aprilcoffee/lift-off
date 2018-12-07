@@ -30,7 +30,7 @@ void drawWaterRipple() {
 void ShowobservationStar() {
   if (ChangeObservationStar==true) {
     if (observationCount>1300)observationCount = 1300;
-    observationCount ++;
+    observationCount +=5;
     observateStarStartPoint = (int)random(observateStar.size()-observationCount);
     observateStarEndPointEasing =observateStarStartPoint;
     observateStarEndPoint = observateStarStartPoint+observationCount;
@@ -87,12 +87,12 @@ class TargetSystem {
     if (targetSystemShow == true) {
       if (dir>0) {
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))));
+          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark,0,255,1,0));
           line(x-s, -height, x-s, height);
         }
       } else {
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))));
+          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark,0,255,1,0));
           line(-width, y-s, width, y-s);
         }
       }
@@ -241,7 +241,7 @@ class SpaceImages {
       }
     } else {
       if (imageMode == 0) {
-        rect(0, 0, imageSizeX, imageSizeY);
+        //rect(0, 0, imageSizeX, imageSizeY);
       } else if (imageMode == 1) {
         image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
         rect(0, 0, imageSizeX, imageSizeY);
@@ -301,88 +301,5 @@ class ObservateStar {
     P.line(px, py, ppx, ppy);
     ppx = px;
     ppy = py;
-  }
-}
-
-void createStuff() {
-  ballCollection.clear();
-  for (int i=0; i<totalBallNum; i++) {
-    float tempX, tempY;
-    float R=random(200);
-    tempX = R*cos(radians(random(360)));
-    tempY = R*sin(radians(random(360)));
-    PVector org = new PVector(tempX, tempY);
-    float radius = random(20, 80);
-    PVector loc = new PVector(org.x+radius, org.y);
-    float offSet = random(TWO_PI);
-    int dir = 1;
-    float r = random(1);
-    if (r>0.5) dir =-1;
-
-    Ball myBall = new Ball(org, loc, radius, dir, offSet);
-    ballCollection.add(myBall);
-  }
-}
-class Ball {
-  PVector org, loc;
-  float sz = 2;
-  float radius, offSet, a, c;
-  float[] col = new float[totalBallNum];
-  int s, dir, countC, d = 40;
-  boolean[] connection = new boolean[totalBallNum];
-
-  Ball(PVector _org, PVector _loc, float _radius, int _dir, float _offSet) {
-    org = _org;
-    loc = _loc;
-    radius = _radius;
-    dir = _dir;
-    offSet = _offSet;
-  }
-
-  void run() {
-    display();
-    move();
-    lineBetween();
-  }
-
-  void move() {
-    if (moveYes==true) {
-      loc.x = org.x + sin(theta*dir+offSet)*radius+tan(theta*dir);
-      loc.y = org.y + cos(theta*dir+offSet)*radius+tan(theta*dir);
-    } else {
-      loc.x = org.x + sin(theta*dir+offSet)*radius;//+tan(theta*dir);
-      loc.y = org.y + cos(theta*dir+offSet)*radius;//+tan(theta*dir);
-    }
-  }
-  void lineBetween() {
-    countC = 1;
-    for (int i=0; i<ballCollection.size(); i++) {
-      Ball other = (Ball) ballCollection.get(i);
-      float distance = loc.dist(other.loc);
-      if (distance >0 && distance < d) {
-        connection[i] = true;
-      } else {
-        connection[i] = false;
-      }
-      if (connection[i]) countC++;
-      //println(countC);
-      if (distance >0 && distance < d) {
-        a = map(countC, 1, 20, 10, 150);
-        stroke(#ffffff, a);
-        //strokeWeight(c);
-        line(loc.x, loc.y, other.loc.x, other.loc.y);
-        stroke(#ffffff, a/10);
-        rectMode(CENTER);
-        rect(loc.x, loc.y, 2, 2);
-        colorMode(RGB);
-      }
-    }
-    //println(countC);
-  }
-  void display() {
-    rectMode(CENTER);
-    noStroke();
-    fill(255, a);
-    ellipse(loc.x, loc.y, sz*a, sz);
   }
 }

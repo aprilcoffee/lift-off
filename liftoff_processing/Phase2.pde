@@ -12,10 +12,10 @@ void changSuperShape() {
   if (geoMoving==true) {
     geoCount+=10;
   }
-  m = 5;
-  n1 = 60;
-  n2 = 150+300*sin(radians(geoCount));
-  n3 = 150;
+  m = 2;
+  n1 = 5;
+  n2 = 5;
+  n3 = 5*sin(radians(frameCount));
 }
 float superShape(float theta, float m, float n1, float n2, float n3) {
   float a=1;
@@ -105,6 +105,9 @@ class Geometry {
   float flyingR1;
   float flyingR2;
 
+  float explosionR1;
+  float explosionR2;
+
   float R2;
   float R1;
 
@@ -123,6 +126,9 @@ class Geometry {
     flyingR1 = 800;
     flyingR2 = 800;
 
+    explosionR1 = geometryR + random(-300, 1500);
+    explosionR2 = geometryR + random(-300, 1500);
+
     R1 = geometryR;
     R2 = geometryR;
   }
@@ -132,14 +138,16 @@ class Geometry {
       float r2 = superShape(lat, m, n1, n2, n3);
       float lon = map(jj, 0, total, -PI, PI);
       float r1 = superShape(lon, m, n1, n2, n3);
-      flyingR1 = 1000;
-      flyingR2 = 1000;
+      flyingR1 = geometryR+random(1000);
+      flyingR2 = geometryR+random(1000);
       flyAway(r1, r2, flyI, flyJ, flyingR1, flyingR2);
+      flying=false;
     }
     for (int s=0; s<6; s++) {
-      globe[s].add((PVector.sub(globeTar[s], globe[s])).mult(0.5));
+      globe[s].add((PVector.sub(globeTar[s], globe[s])).mult(0.1));
     }
   }
+  
   void show(PVector tempRight, PVector tempDown, PVector tempRightDown, int showMode) {
 
     if (showMode == 0) {
@@ -156,9 +164,6 @@ class Geometry {
     } else {
       beginShape(TRIANGLE_STRIP);
     }
-
-
-
     if (textureOn==true) {
       texture(orbitTexture);
     } else {
@@ -201,7 +206,42 @@ class Geometry {
 
     popMatrix();
   }
+  void exploded(float r1, float r2, float i, float j) {
+    r = explosionR1;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
 
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+    PVector center1 = new PVector((x1+x2+x3)/3, (y1+y2+y3)/3, (z1+z2+z3)/3);
+
+    r = explosionR2;
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    PVector center2 = new PVector((x4+x5+x6)/3, (y4+y5+y6)/3, (z4+z5+z6)/3);
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
   void flyAway(float r1, float r2, float i, float j, float flyingR1, float flyingR2) {
     r = flyingR1;
     float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
@@ -252,7 +292,7 @@ class Geometry {
     float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
     float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
 
-    r = er+random(-30, 30);
+    r = er+random(-800, 800);
     float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
     float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
     float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));

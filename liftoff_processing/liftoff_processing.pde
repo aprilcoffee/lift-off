@@ -21,7 +21,6 @@ NetAddress myRemoteLocation;
 MidiBus myBus; // The MidiBus
 boolean[] midiBusing;
 
-import processing.video.*;
 
 import ch.bildspur.postfx.builder.*;
 import ch.bildspur.postfx.pass.*;
@@ -101,14 +100,15 @@ float speed;
 int starWidth = 800;
 int starHeight = 450;
 Geometry[][] geometry;
-float geometryR = 300;
-int total =60;
+float geometryR = 450;
+int total =70;
 boolean flyAway = false;
 boolean changeGeometryMove=false;
 int flyI=0;
 int flyJ=0;
 boolean addStarTrigger = false;
 int starTriggerCount = 0;
+int flyingAwayCount = 0;
 boolean showAllgeo = false;
 boolean textureOn = false;
 boolean crashSide = false;
@@ -119,6 +119,8 @@ boolean changeTexture = false;
 boolean spinMoveFaster = false;
 boolean starGoCenter = false;
 boolean geoMoving = false;
+boolean resetGeoLocation = false;
+boolean explosion = false;
 PImage[] planetImage;
 int planetImageLength = 6;
 int currentPlanetImage = 0;
@@ -136,7 +138,6 @@ PVector[] attractors;
 int attractorsSize = 2;
 ArrayList<Particle> particles;
 ArrayList<Blob> blobs;
-
 int cols, rows;
 int scl = 10;
 int w = 500;
@@ -144,19 +145,22 @@ int h = 800;
 float[][] terrainLeft;
 float[][] terrainRight;
 float[] audioAmp;
-
-
-PGraphics juliaTexture;
-float juliaAngle;
-boolean juliaShowTrigger = false;
-boolean bobbyTrigger = false;
-boolean moveStuff=false;
 int fc;
 int totalBallNum = 80;
 ArrayList ballCollection;
 boolean save = false;
 float scal, theta;
 boolean moveYes=false;
+PGraphics juliaTexture;
+float juliaAngle;
+boolean juliaShowTrigger = false;
+boolean changeBalls = false;
+boolean changeTerrainMode = false;
+int TerrainMode = 0;
+boolean moveStuff=false;
+boolean phase3ShowBalls = false;
+boolean phase3ShowTerrain = false;
+boolean phase3ShowAttrator = false;
 
 PFont font_trench;
 String CPUperform="";
@@ -166,8 +170,8 @@ String CPUperform="";
 int shabaMode2 = 0;
 void setup() {
   //size(1920, 1080, P3D);
-  size(2000, 600, P3D);
-  //fullScreen(P3D, 1);
+  //size(1280, 800, P3D);
+  fullScreen(P3D, 1);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -181,9 +185,9 @@ void setup() {
   //OSCinit
   oscP5 = new OscP5(this, 12000);
   myRemoteLocation = new NetAddress("127.0.0.1", 13000);
-  oscP5.plug(this, "initVideo", "/initVideo");
   oscP5.plug(this, "test", "/test");
   oscP5.plug(this, "mode", "/mode");  
+  oscP5.plug(this, "con", "/con");  
   midiBusing = new boolean[18];
   for (int s=0; s<16; s++) {
     midiBusing[s]=false;
@@ -208,8 +212,9 @@ void setup() {
     spaceImg[s] = loadImage("space_imgs/"+(s+1)+".jpeg");
     spaceImgBW[s] = loadImage("space_imgsBW/"+(s+1)+".jpeg");
   } 
-  //ballCollection = new ArrayList();
-  //createStuff();
+  ballCollection = new ArrayList();
+  createStuff();
+
   targetSystem = new ArrayList<TargetSystem>();
   targetSystem.add(new TargetSystem(200, random(360), 1));
   targetSystem.add(new TargetSystem(200, random(360), -1));
@@ -267,7 +272,7 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 1;
+  phase = 3;
 }
 void draw() {
   //if (frameCount % 10 ==0) {
@@ -327,14 +332,15 @@ void draw() {
   if (frameCount % 3600 ==0)runtime.gc();
   surface.setTitle(str(frameRate));
 }
+/*
 void keyPressed() {
-  if (key == '1') {
-    shabaMode2 = 0;
-  }
-  if (key == '2') {
-    shabaMode2 = 1;
-  }
-  if (key == '3') {
-    shabaMode2 = 2;
-  }
-}
+ if (key == '1') {
+ shabaMode2 = 0;
+ }
+ if (key == '2') {
+ shabaMode2 = 1;
+ }
+ if (key == '3') {
+ shabaMode2 = 2;
+ }
+ }*/

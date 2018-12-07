@@ -100,17 +100,7 @@ void mode1() {
   image(observateStarBackground, 0, 0, width, height);
   //  if (random(5)>4)
   //   filter(INVERT);
-  /*
-  for (int i=0; i<ballCollection.size(); i++) {
-   Ball mb = (Ball) ballCollection.get(i);
-   mb.run();
-   }
-   theta += (0.0523/2);
-   if (moveStuff==true) {
-   createStuff();
-   moveStuff=false;
-   }
-   */
+  
   popMatrix();
   noStroke();
 }
