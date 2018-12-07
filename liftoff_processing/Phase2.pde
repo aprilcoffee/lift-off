@@ -12,10 +12,10 @@ void changSuperShape() {
   if (geoMoving==true) {
     geoCount+=10;
   }
-  m = 2;
-  n1 = 5;
-  n2 = 5;
-  n3 = 5*sin(radians(frameCount));
+  m = 3;
+  n1 = 10;
+  n2 = 15;
+  n3 = 5+15*sin(radians(frameCount));
 }
 float superShape(float theta, float m, float n1, float n2, float n3) {
   float a=1;
@@ -110,9 +110,12 @@ class Geometry {
 
   float R2;
   float R1;
-
+  PVector center1;
+  PVector center2;
   Geometry(int ei, int ej, PVector[] eglobeTar) {
 
+    center1 = new PVector();
+    center2 = new PVector();
     ii = ei;
     jj = ej;
     globeTar = eglobeTar;
@@ -147,7 +150,7 @@ class Geometry {
       globe[s].add((PVector.sub(globeTar[s], globe[s])).mult(0.1));
     }
   }
-  
+
   void show(PVector tempRight, PVector tempDown, PVector tempRightDown, int showMode) {
 
     if (showMode == 0) {
@@ -177,9 +180,21 @@ class Geometry {
       }
     }
     textureMode(NORMAL);
-    vertex(globe[0].x, globe[0].y, globe[0].z, globeTexture.y, globeTexture.x);
-    vertex(globe[1].x, globe[1].y, globe[1].z, tempRight.y, tempRight.x);
-    vertex(globe[2].x, globe[2].y, globe[2].z, tempDown.y, tempDown.x);
+
+    if (explosion) {
+      translate(center1.x, center1.y, center1.z);
+      rotate(radians(frameCount+ii+jj));
+      float tempX, tempY, tempZ;
+
+      scale(0.3);
+      vertex(globe[0].x-center1.x, globe[0].y-center1.y, globe[0].z-center1.z, globeTexture.y, globeTexture.x);
+      vertex(globe[1].x-center1.x, globe[1].y-center1.y, globe[1].z-center1.z, tempRight.y, tempRight.x);
+      vertex(globe[2].x-center1.x, globe[2].y-center1.y, globe[2].z-center1.z, tempDown.y, tempDown.x);
+    } else {
+      vertex(globe[0].x, globe[0].y, globe[0].z, globeTexture.y, globeTexture.x);
+      vertex(globe[1].x, globe[1].y, globe[1].z, tempRight.y, tempRight.x);
+      vertex(globe[2].x, globe[2].y, globe[2].z, tempDown.y, tempDown.x);
+    }
     endShape(CLOSE);
 
     if (showMode == 1&&textureOn!=true) {
@@ -199,9 +214,21 @@ class Geometry {
         noStroke();
       }
     }
-    vertex(globe[4].x, globe[4].y, globe[4].z, tempDown.y, tempDown.x);
-    vertex(globe[3].x, globe[3].y, globe[3].z, tempRight.y, tempRight.x);
-    vertex(globe[5].x, globe[5].y, globe[5].z, tempRightDown.y, tempRightDown.x);
+    if (explosion) {
+      translate(center2.x, center2.y, center2.z);
+      rotate(radians(frameCount+ii+jj));
+      float tempX, tempY, tempZ;
+
+      //tempX= 
+      scale(0.3);
+      vertex(globe[3].x-center2.x, globe[3].y-center2.y, globe[3].z-center2.z, globeTexture.y, globeTexture.x);
+      vertex(globe[4].x-center2.x, globe[4].y-center2.y, globe[4].z-center2.z, tempRight.y, tempRight.x);
+      vertex(globe[5].x-center2.x, globe[5].y-center2.y, globe[5].z-center2.z, tempDown.y, tempDown.x);
+    } else {
+      vertex(globe[3].x, globe[3].y, globe[3].z, globeTexture.y, globeTexture.x);
+      vertex(globe[4].x, globe[4].y, globe[4].z, tempRight.y, tempRight.x);
+      vertex(globe[5].x, globe[5].y, globe[5].z, tempDown.y, tempDown.x);
+    }
     endShape(CLOSE);
 
     popMatrix();
@@ -220,6 +247,7 @@ class Geometry {
     float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
     float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
     PVector center1 = new PVector((x1+x2+x3)/3, (y1+y2+y3)/3, (z1+z2+z3)/3);
+
 
     r = explosionR2;
     float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));

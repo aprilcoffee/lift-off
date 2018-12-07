@@ -120,6 +120,7 @@ public void test(int theA, int theB) {
     case 10:
       resetGeoLocation = true;
       textureOn=false;
+      explosion = false;
       break;
     case 11:
       explosion = true;

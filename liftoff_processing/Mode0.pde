@@ -43,7 +43,7 @@ void initPhase() {
     blobs.get(s).showMode1();
     blobs.get(s).cons();
   }
-  image(LTGlogo, -25, 0, width*0.75, height*0.75);
+  image(LTGlogo, -10, 0, width*0.4, height*0.4);
   popMatrix();
   blendMode(BLEND);
 }

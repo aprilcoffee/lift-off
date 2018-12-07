@@ -73,15 +73,15 @@ void mode1() {
     } else { 
       if (photoTriggerImageRect==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          random(-height/2+312, height/2-312), 
           dir, targetSystem.get(0).x, 0));
       } else if (photoTriggerImageBW==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          random(-height/2+312, height/2-312), 
           dir, targetSystem.get(0).x, 1));
       } else if (photoTriggerImage==true) {
         spaceImages.add(new SpaceImages(500+random(-20, 20), 
-          random(-height/2+100, height/2-100), 
+          random(-height/2+312, height/2-312), 
           dir, targetSystem.get(0).x, 2));
       }
     }

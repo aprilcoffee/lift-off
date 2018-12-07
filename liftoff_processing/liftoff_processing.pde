@@ -27,6 +27,7 @@ import ch.bildspur.postfx.pass.*;
 import ch.bildspur.postfx.*;
 
 //modeCheck
+int newHeight;
 int phase = 0;
 int transition=0;
 boolean transiting = false;
@@ -183,6 +184,7 @@ void setup() {
   blendMode(ADD);
   //colorMode(HSB, 255);
   smooth(5);
+  newHeight = 3 * (width/10);
 
   //fontinit
   font_trench = createFont("font/trench100free.ttf", 32);   
@@ -211,6 +213,12 @@ void setup() {
   fftLin = new FFT( in.bufferSize(), in.sampleRate() );
   fftLin.logAverages( 22, 3 );
 
+  //phase0
+  blobs = new ArrayList<Blob>();
+  for (int s=0; s<5; s++) {
+    blobs.add(new Blob(0, 0, random(200, 230)));
+  }
+
   //phase1
   spaceImg = new PImage[photoLength];
   spaceImgBW = new PImage[photoLength];
@@ -222,8 +230,8 @@ void setup() {
   createStuff();
 
   targetSystem = new ArrayList<TargetSystem>();
-  targetSystem.add(new TargetSystem(200, random(360), 1));
-  targetSystem.add(new TargetSystem(200, random(360), -1));
+  targetSystem.add(new TargetSystem(400, 150, random(360), 1));
+  targetSystem.add(new TargetSystem(400, 150, random(360), -1));
   observateStar=new ArrayList<ObservateStar>();
   for (int s=-800; s<800; s+=1) {
     float x = s;
@@ -258,10 +266,7 @@ void setup() {
   for (int s=0; s<300; s++) {
     particles.add(new Particle(width/2, height/2+random(-200, 200), random(-50, 50)));
   }
-  blobs = new ArrayList<Blob>();
-  for (int s=0; s<5; s++) {
-    blobs.add(new Blob(0, 0, random(330, 350)));
-  }
+
   juliaTexture = createGraphics(640, 480);
 
   cols = w/scl;
@@ -278,9 +283,11 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 0;
+  phase = 2;
 }
-void draw() {
+void draw() {  
+  //hint(ENABLE_DEPTH_TEST);
+
   //if (frameCount % 10 ==0) {
   //  println(str(frameRate));
   // }
@@ -350,11 +357,10 @@ void draw() {
   noStroke();
   fill(255, 0, 0);
   //16:9 = 10:3 
-  //1920 : 1200 = 10 : 576 
-  rect(0, 0, width, 300);
-  rect(0, height, width, -300);
-  
-  hint(ENABLE_DEPTH_TEST);
+  //1920 : 1200 = 1920 : 576 
+  //1600 : 1000 = 1600 : 480
+  rect(0, 0, width, (height - 3 * (width/10))/2);
+  rect(0, height, width, -(height - 3 * (width/10))/2);
 }
 /*
 void keyPressed() {
