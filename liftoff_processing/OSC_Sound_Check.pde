@@ -126,17 +126,46 @@ public void test(int theA, int theB) {
       break;
     }
   } else if (theA==3) {
-    if (theB==0) {
+    switch (theB) {
+    case 0:
       changeTerrainMode = true;
       moveStuff = true;
-    } else if (theB==1) {
+      break;
+    case 1:
       juliaShowTrigger = true;
+      break;
+    case 2:
+      terrainRandomTrigger = true;
+      break;
+    case 6:
+      TerrainMode = 0;
+      print("TerrainMode");
+      print(TerrainMode);
+      break;
+    case 7:
+      TerrainMode = 1;
+      print("TerrainMode");
+      print(TerrainMode);
+      break;
+    case 8:
+      TerrainMode = 2;
+      print("TerrainMode");
+      print(TerrainMode);
+      break;
+    case 9:
+      TerrainMode = 3;
+      print("TerrainMode");
+      print(TerrainMode);
+      break; 
+    case 10:
+      TerrainRandom = true;
+      break;
     }
   }
 }
 
 public void con(int theA, int theB, int theC) {
-  println(theA,theB,theC);
+  println(theA, theB, theC);
   if (theA==3) {
     switch (theB) {
     case 3:
@@ -148,13 +177,13 @@ public void con(int theA, int theB, int theC) {
     case 5:
       phase3ShowAttrator = returnOSC(theC);
       break;
-    case 6:
-      break;
-    case 7:
-      break;
-    case 8:
-      break;
     case 9:
+      TerrainRandom = returnOSC(theC);
+    case 10:
+      cameraMovingX = returnOSC(theC);
+      break;
+    case 11:      
+      cameraMovingY = returnOSC(theC);
       break;
     }
   }

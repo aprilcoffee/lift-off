@@ -373,6 +373,14 @@ void drawTerrain() {
   //background(255); 
   //blendMode(ADD);
   //println(fft.specSize());
+
+  if (TerrainRandom==true) {
+    if (terrainRandomTrigger==true) {
+      TerrainMode = (int)random(4);
+      terrainRandomTrigger=false;
+    }
+  } 
+
   //-------------------terrain1-------------------
   pushMatrix();
   //noFill();
@@ -387,23 +395,67 @@ void drawTerrain() {
       stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
       //println(audioAmp[y]);
     } else {
-
       //println(audioAmp[y]);
       stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
     }
-    beginShape(POINT);
-    for (int x = 0; x < cols; x++) {
-      //noStroke();
-      //fill(255,0,0);
-      stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
-      //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
-      //fill(255);
-      point(x*scl, y*scl, terrainLeft[x][y]);
-      point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
-      vertex(x*scl, y*scl, terrainLeft[x][y]);
-      vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+
+    if (TerrainMode==0) {
+      beginShape(POINT);
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        point(x*scl, y*scl, terrainLeft[x][y]);
+        point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        //vertex(x*scl, y*scl, terrainLeft[x][y]);
+        //vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==1) {
+      beginShape();
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        stroke(map(audioAmp[y], 0, 5000, 0, 255), map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainLeft[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==2) {
+      beginShape(TRIANGLE_STRIP);
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainLeft[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==3) {
+      beginShape(TRIANGLE_STRIP);
+      for (int x = 0; x < cols; x++) {
+        stroke(10, map(y, rows, 0, 10, 80));
+        //fill(255,0,0);
+        fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainLeft[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+      }
+      endShape();
     }
-    endShape();
   }
   popMatrix();
 
@@ -414,6 +466,8 @@ void drawTerrain() {
   rotateX(PI/2);
   scale(2, 1);
 
+
+
   for (int y = 0; y < rows-1; y++) {//rows-1 > and the below it (y+1)
     if (audioAmp[y]>1500) {
       stroke(map(audioAmp[y], 1500, 2200, 0, 255), 200, 200, map(y, 0, 80, 255, 0));
@@ -422,21 +476,63 @@ void drawTerrain() {
       //println(audioAmp[y]);
       stroke(255, map(y, 0, 80, 1, 0)*map(audioAmp[y], 0, 1500, 50, 150)); // change tranparency by amount of sound
     }
-    beginShape(POINT);
-    for (int x = 0; x < cols; x++) {
-      //noStroke();
-      //noFill();
-      stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
-      //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
-      //stroke(100);
-      //fill(100);
-
-      point(-x*scl, y*scl, terrainRight[x][y]);
-      point(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
-      vertex(-x*scl, y*scl, terrainRight[x][y]);
-      vertex(-x*scl, (y+1)*scl, terrainRight[x][y+1]);
+    if (TerrainMode==0) {
+      beginShape(POINT);
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        stroke(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        point(x*scl, y*scl, terrainRight[x][y]);
+        point(x*scl, (y+1)*scl, terrainRight[x][y+1]);
+        //vertex(x*scl, y*scl, terrainLeft[x][y]);
+        //vertex(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==1) {
+      beginShape();
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        stroke(map(audioAmp[y], 0, 5000, 0, 255), map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainRight[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainRight[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==2) {
+      beginShape(TRIANGLE_STRIP);
+      for (int x = 0; x < cols; x++) {
+        //noStroke();
+        //fill(255,0,0);
+        fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainRight[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainRight[x][y+1]);
+      }
+      endShape();
+    } else if (TerrainMode==3) {
+      beginShape(TRIANGLE_STRIP);
+      for (int x = 0; x < cols; x++) {
+        stroke(10, map(y, rows, 0, 10, 80));
+        //fill(255,0,0);
+        fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
+        //fill(255);
+        //point(x*scl, y*scl, terrainLeft[x][y]);
+        //point(x*scl, (y+1)*scl, terrainLeft[x][y+1]);
+        vertex(x*scl, y*scl, terrainRight[x][y]);
+        vertex(x*scl, (y+1)*scl, terrainRight[x][y+1]);
+      }
+      endShape();
     }
-    endShape();
   }
   popMatrix();
   popMatrix();

@@ -157,10 +157,16 @@ boolean juliaShowTrigger = false;
 boolean changeBalls = false;
 boolean changeTerrainMode = false;
 int TerrainMode = 0;
+boolean TerrainRandom = false;
+boolean terrainRandomTrigger =false;
 boolean moveStuff=false;
 boolean phase3ShowBalls = false;
 boolean phase3ShowTerrain = false;
 boolean phase3ShowAttrator = false;
+boolean cameraMovingX = false;
+boolean cameraMovingY = false;
+float phase3CamX = 0;
+float phase3CamY = 0;
 
 PFont font_trench;
 String CPUperform="";
@@ -169,9 +175,9 @@ String CPUperform="";
 // shaba mode 2
 int shabaMode2 = 0;
 void setup() {
-  //size(1920, 1080, P3D);
-  //size(1280, 800, P3D);
-  fullScreen(P3D, 1);
+  //size(, 600, P3D);
+  size(1600, 1000, P3D);
+  //fullScreen(P3D, 2);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -272,12 +278,14 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 3;
+  phase = 0;
 }
 void draw() {
   //if (frameCount % 10 ==0) {
   //  println(str(frameRate));
   // }
+  pushStyle();
+  pushMatrix();
   if (transiting) {
     switch(transition) {
     case 0:
@@ -331,6 +339,22 @@ void draw() {
   //fx.render();  
   if (frameCount % 3600 ==0)runtime.gc();
   surface.setTitle(str(frameRate));
+  popMatrix();
+  popStyle();
+
+  camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
+  rectMode(CORNER);
+  blendMode(REPLACE);
+  colorMode(RGB);
+  hint(DISABLE_DEPTH_TEST);
+  noStroke();
+  fill(255, 0, 0);
+  //16:9 = 10:3 
+  //1920 : 1200 = 10 : 576 
+  rect(0, 0, width, 300);
+  rect(0, height, width, -300);
+  
+  hint(ENABLE_DEPTH_TEST);
 }
 /*
 void keyPressed() {

@@ -1,6 +1,6 @@
 void mode3() { 
   julia(juliaTexture);
-  colorMode(RGB, 255);
+  colorMode(HSB, 255);
   blendMode(SUBTRACT);  
   //background(0);
   if (transiting==false)
@@ -10,7 +10,23 @@ void mode3() {
   //if (random(shakeGlitch)<5) {
   //}
   soundCheck();  
-  camera(100*sin(radians(frameCount)), 0, 1000, 0, 0, 0, 0, 1, 0);
+  float phase3CamXX = 500*sin(radians(frameCount));
+  float phase3CamYY = -300*abs(sin(radians(frameCount*0.73)));
+
+  if (cameraMovingX) {
+    phase3CamXX=500*sin(radians(frameCount));
+  } else {
+    phase3CamXX = 0;
+  }
+  if (cameraMovingY) {
+    phase3CamYY=500*sin(radians(frameCount));
+  } else {
+    phase3CamYY=0;
+  }
+
+  phase3CamX += (phase3CamXX - phase3CamX *0.3);
+  phase3CamY += (phase3CamYY - phase3CamY *0.3);
+  camera(phase3CamX, phase3CamY, 1000, 0, 0, 0, 0, 1, 0);
 
   if (phase3ShowBalls) {
     mode3A();
