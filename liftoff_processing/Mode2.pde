@@ -19,7 +19,7 @@ void mode2() {
     starTriggerCount++;
     if (starTriggerCount > 1550)starTriggerCount=1550;
     for (int s=0; s<(starTriggerCount/100) + 1; s++) {
-      stars.add(new Star(10, phase2Counter*0.0001));
+      stars.add(new Star(10, starTriggerCount*0.001));
     }
     addStarTrigger=false;
   }
@@ -72,8 +72,8 @@ void mode2() {
     }
   } else {
     if (flyAway==true) {
-      flyingAwayCount +=10;
-      if (flyingAwayCount >= (total-20)*(total-20))flyingAwayCount = (total-20)*(total-20);
+      flyingAwayCount +=15;
+      if (flyingAwayCount >= (total-30)*(total-30))flyingAwayCount = (total-30)*(total-30);
       for (int s=0; s<flyingAwayCount; s++) {
         flyI = (int)random(total);
         flyJ = (int)random(total);
@@ -99,7 +99,7 @@ void mode2() {
         newLatMin = newLatMax;
         newLatMax = temp;
       }
-      float temp_newR = geometryR + random(2000, 4000);
+      float temp_newR = geometryR + random(3500, 6000);
       for (int i=newLatMin; i<newLatMax; i++) {
         float lat = map(i, 0, total, -HALF_PI, HALF_PI);
         float r2 = superShape(lat, m, n1, n2, n3);

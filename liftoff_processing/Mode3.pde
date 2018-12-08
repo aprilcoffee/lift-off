@@ -11,7 +11,7 @@ void mode3() {
   //}
   soundCheck();  
 
-  if (frameCount%10==0) {
+  if (frameCount%30==0) {
     println(totalAmp);
   }
   float phase3CamXX = 0;

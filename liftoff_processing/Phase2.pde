@@ -141,8 +141,8 @@ class Geometry {
       float r2 = superShape(lat, m, n1, n2, n3);
       float lon = map(jj, 0, total, -PI, PI);
       float r1 = superShape(lon, m, n1, n2, n3);
-      flyingR1 = geometryR+random(2500);
-      flyingR2 = geometryR+random(2500);
+      flyingR1 = geometryR+random(1200);
+      flyingR2 = geometryR+random(1200);
       flyAway(r1, r2, flyI, flyJ, flyingR1, flyingR2);
       flying=false;
     }

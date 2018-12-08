@@ -101,7 +101,7 @@ float speed;
 int starWidth = 800;
 int starHeight = 450;
 Geometry[][] geometry;
-float geometryR = 450;
+float geometryR = 375;
 int total =70;
 boolean flyAway = false;
 boolean changeGeometryMove=false;
@@ -118,7 +118,7 @@ boolean showHalfTrigger = false;
 boolean startMove = false;
 boolean changeTexture = false;
 boolean spinMoveFaster = false;
-boolean starGoCenter = true;
+boolean starGoCenter = false;
 boolean geoMoving = false;
 boolean resetGeoLocation = false;
 boolean explosion = false;
@@ -180,8 +180,8 @@ String CPUperform="";
 int shabaMode2 = 0;
 void setup() {
   //size(, 600, P3D);
-  size(1920, 1200, P3D);
-  //fullScreen(P3D, 2);
+  //size(1920, 1200, P3D);
+  fullScreen(P3D, 2);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -286,7 +286,7 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 2;
+  phase = 0;
 }
 void draw() {  
   //hint(ENABLE_DEPTH_TEST);
@@ -294,6 +294,8 @@ void draw() {
   //if (frameCount % 10 ==0) {
   //  println(str(frameRate));
   // }
+
+  translate(0, -70);
   pushStyle();
   pushMatrix();
   if (transiting) {
@@ -352,18 +354,24 @@ void draw() {
   popMatrix();
   popStyle();
 
-  camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
-  rectMode(CORNER);
-  blendMode(REPLACE);
-  colorMode(RGB);
-  hint(DISABLE_DEPTH_TEST);
-  noStroke();
-  fill(255, 0, 0);
-  //16:9 = 10:3 
-  //1920 : 1200 = 1920 : 576 
-  //1600 : 1000 = 1600 : 480
-  rect(0, 0, width, (height - 3 * (width/10))/2);
-  rect(0, height, width, -(height - 3 * (width/10))/2);
+  if (phase==3) {
+  } else {
+    camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
+    rectMode(CORNER);
+    blendMode(REPLACE);
+    colorMode(RGB);
+    hint(DISABLE_DEPTH_TEST);
+    noStroke();
+    fill(0);
+    //16:9 = 10:3 
+    //1920 : 1200 = 1920 : 576 
+    //1600 : 1000 = 1600 : 480
+    //rect(0, 0, width, (height - 3 * (width/10))/2);
+    //rect(0, height, width, -(height - 3 * (width/10))/2);
+    rect(0, 0, width, 260);
+    rect(0, height, width, -(height-824));
+  }
+  println(mouseY);
 }
 /*
 void keyPressed() {

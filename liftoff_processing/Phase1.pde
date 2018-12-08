@@ -233,18 +233,18 @@ class SpaceImages {
     noFill();
     pushMatrix();
     translate(photoX, photoY, photoZ);
-
-    if (phase1CornerCall==true || photoSpin==true) {
-      if (imageMode == 1) {
-        image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
-      } else if (imageMode == 2) {
-        image(spaceImg[imageFlag], 0, 0, imageSizeX, imageSizeY);
-      }
-    } else if (glitchTrigger==true) {
+    if (glitchTrigger==true) {
       if (imageMode == 1) {
         image(imageGlitch(spaceImgBW[imageFlag]), 0, 0, imageSizeX, imageSizeY);
       } else if (imageMode == 2) {
         image(imageGlitch(spaceImg[imageFlag]), 0, 0, imageSizeX, imageSizeY);
+      }
+    } 
+    else if (phase1CornerCall==true || photoSpin==true) {
+      if (imageMode == 1) {
+        image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
+      } else if (imageMode == 2) {
+        image(spaceImg[imageFlag], 0, 0, imageSizeX, imageSizeY);
       }
     } else {
       if (imageMode == 0) {

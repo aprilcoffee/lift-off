@@ -92,7 +92,7 @@ void julia(PGraphics P) {
       bright = map(sqrt(bright), 0, 1, 0, 255);
 
       if (n == maxierations)
-        P.pixels[i+j*P.width] = color(255);
+        P.pixels[i+j*P.width] = color(0);
       else {
         float hue = sqrt(float(n)/maxierations) * 255;
         P.pixels[i+j*P.width] = color(hue);
@@ -186,7 +186,7 @@ void drawTerrain() {
   for (int x = 0; x < cols; x++) {
     if (x%2==0) {
       terrainLeft[x][0] = fftLin.getBand(x*2)/2*10+in.left.get(x*2)*20;
-      terrainRight[x][0] =fftLin.getBand(x*2)/2*10+in.right.get(x*2)*20;
+      terrainRight[x][0]= fftLin.getBand(x*2)/2*10+in.right.get(x*2)*20;
     } else {
       terrainLeft[x][0] = -fftLin.getBand(x*2)/2*10+in.left.get(x*2)*20;
       terrainRight[x][0]= -fftLin.getBand(x*2)/2*10+in.right.get(x*2)*20;
@@ -230,7 +230,7 @@ void drawTerrain() {
         for (int x = 0; x < cols; x++) {
           //noStroke();
           //fill(255,0,0);
-          stroke(map(audioAmp[y], 0, 30000, 0, 255), map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], map(y, rows, 0, 0, 150));
+          stroke(map(audioAmp[y], 0, 50000, 0, 255), map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], map(y, rows, 0, 0, 150));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           point(x*scl, y*scl, terrainLeft[x][y]);
@@ -248,7 +248,7 @@ void drawTerrain() {
           //noStroke();
           //fill(255,0,0);
           noFill();
-          stroke(map(audioAmp[y], 0, 50000, 0, 255), map(y, rows, 0, 0, 200));
+          stroke(map(audioAmp[y]%10000, 0, 10000, 0, 255), map(y, rows, 0, 0, 100));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -266,7 +266,7 @@ void drawTerrain() {
           //noStroke();
           //fill(255,0,0);
           noStroke();
-          fill(map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 150));
+          fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -280,10 +280,11 @@ void drawTerrain() {
     case 3:
       {
         beginShape(TRIANGLE_STRIP);
-        for (int x = 0; x < cols; x++) {
-          stroke(10, map(y, rows, 0, 10, 80));
+        for (int x = 0; x < cols; x+=5) {
+          stroke(255, map(y, rows, 0, 10, 80));
           //fill(255,0,0);
-          fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 150));
+          
+          fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -320,7 +321,7 @@ void drawTerrain() {
         for (int x = 0; x < cols; x++) {
           //noStroke();
           //fill(255,0,0);
-          stroke(map(audioAmp[y], 0, 30000, 0, 255), map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], map(y, rows, 0, 0, 150));
+          stroke(map(audioAmp[y], 0, 30000, 0, 255), map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], map(y, rows, 0, 0, 100));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           point(-x*scl, y*scl, terrainRight[x][y]);
@@ -338,7 +339,7 @@ void drawTerrain() {
           //noStroke();
           //fill(255,0,0);
           noFill();
-          stroke(map(audioAmp[y], 0, 50000, 0, 255), map(y, rows, 0, 0, 200));
+          stroke(map(audioAmp[y], 0, 5000, 0, 255), map(y, rows, 0, 0, 200));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -356,7 +357,8 @@ void drawTerrain() {
           //noStroke();
           //fill(255,0,0);
           noStroke();
-          fill(map(audioAmp[y], 0, 100000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 150));
+         // println(fftLin.getBand(x*2));
+          fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -370,10 +372,10 @@ void drawTerrain() {
     case 3:
       {
         beginShape(TRIANGLE_STRIP);
-        for (int x = 0; x < cols; x++) {
-          stroke(10, map(y, rows, 0, 10, 80));
+        for (int x = 0; x < cols; x+=5) {
+          stroke(255, map(y, rows, 0, 10, 80));
           //fill(255,0,0);
-          fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 150));
+          fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
           //point(x*scl, y*scl, terrainLeft[x][y]);
@@ -456,7 +458,7 @@ class Ball {
         stroke(#ffffff, a/10);
         rectMode(CENTER);
         rect(loc.x, loc.y, 2, 2);
-        colorMode(RGB);
+        
       }
     }
     //println(countC);
