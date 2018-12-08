@@ -125,6 +125,11 @@ public void test(int theA, int theB) {
     case 11:
       explosion = true;
       break;
+    case 12:
+      phase2BWtrigger = true;
+      break;
+      
+    
     }
   } else if (theA==3) {
     switch (theB) {
@@ -137,6 +142,7 @@ public void test(int theA, int theB) {
       break;
     case 2:
       terrainRandomTrigger = true;
+      randomCamTrigger = true;
       break;
     case 6:
       TerrainMode = 0;
@@ -186,6 +192,9 @@ public void con(int theA, int theB, int theC) {
     case 11:      
       cameraMovingY = returnOSC(theC);
       break;
+    case 12:      
+      randomCam = returnOSC(theC);;
+      break;
     }
   }
 }
@@ -196,12 +205,12 @@ boolean returnOSC(int input) {
 
 void noteOff(int channel, int pitch, int velocity) {
   // Receive a noteOff
-  println();
-  println("Note Off:");
-  println("--------");
-  println("Channel:"+channel);
-  println("Pitch:"+pitch);
-  println("Velocity:"+velocity);
+  //println();
+  //println("Note Off:");
+  //println("--------");
+  //println("Channel:"+channel);
+  //println("Pitch:"+pitch);
+  //println("Velocity:"+velocity);
 
   OscMessage myMessage = new OscMessage("/test");
   myMessage.add(phase);

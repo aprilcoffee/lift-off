@@ -129,8 +129,8 @@ class Geometry {
     flyingR1 = 800;
     flyingR2 = 800;
 
-    explosionR1 = geometryR + random(-300, 1500);
-    explosionR2 = geometryR + random(-300, 1500);
+    explosionR1 = geometryR + random(-300, 3000);
+    explosionR2 = geometryR + random(-300, 3000);
 
     R1 = geometryR;
     R2 = geometryR;
@@ -141,8 +141,8 @@ class Geometry {
       float r2 = superShape(lat, m, n1, n2, n3);
       float lon = map(jj, 0, total, -PI, PI);
       float r1 = superShape(lon, m, n1, n2, n3);
-      flyingR1 = geometryR+random(1000);
-      flyingR2 = geometryR+random(1000);
+      flyingR1 = geometryR+random(2500);
+      flyingR2 = geometryR+random(2500);
       flyAway(r1, r2, flyI, flyJ, flyingR1, flyingR2);
       flying=false;
     }

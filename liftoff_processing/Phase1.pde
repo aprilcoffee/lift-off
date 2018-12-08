@@ -62,6 +62,7 @@ class TargetSystem {
   int dir;
   int targetMode;
   float easing = 0.1;
+  int colorFade = 255;
   TargetSystem(float erX, float erY, float ea, int edir) {
     rX = erX;
     rY = erY;
@@ -88,14 +89,16 @@ class TargetSystem {
   }
   void showBall() {
     if (targetSystemShow == true) {
+      colorFade -=2;
+      if (colorFade<2) colorFade = 0; 
       if (dir>0) {
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
+          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
           line(x-s, -height, x-s, height);
         }
       } else {
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 0, 0, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
+          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
           line(-width, y-s, width, y-s);
         }
       }
@@ -114,14 +117,14 @@ class TargetSystem {
     } else if (targetSystemLineA==true) {
       if (dir>0) {
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 255, 255, 150*sin(radians(map(s, -100, 100, 0, 180))));
+          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -50, 50, 0, 180))));
           line(x-s, -height, x-s, height);
         }
       }
     } else if (targetSystemLineB==true) {
       if (dir==-1)
         for (int s=-50; s<=50; s+=4) {
-          stroke(255, 255, 255, 150*sin(radians(map(s, -100, 100, 0, 180))));
+          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -50, 50, 0, 180))));
           line(-width, y-s, width, y-s);
         }
     }

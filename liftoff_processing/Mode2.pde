@@ -4,6 +4,13 @@ void mode2() {
   if (transiting==false)
     background(0);
 
+  if (phase2BWtrigger==true) {
+    colorMode(HSB, 255);
+    blendMode(BLEND);
+    background(255);
+    phase2BWtrigger=false;
+  } 
+
   pushMatrix();
   colorMode(HSB, 255);
   blendMode(BLEND);
@@ -92,7 +99,7 @@ void mode2() {
         newLatMin = newLatMax;
         newLatMax = temp;
       }
-      float temp_newR = geometryR + random(1500, 3000);
+      float temp_newR = geometryR + random(2000, 4000);
       for (int i=newLatMin; i<newLatMax; i++) {
         float lat = map(i, 0, total, -HALF_PI, HALF_PI);
         float r2 = superShape(lat, m, n1, n2, n3);

@@ -1,17 +1,21 @@
 void mode3() { 
   julia(juliaTexture);
   colorMode(HSB, 255);
-  blendMode(SUBTRACT);  
+  blendMode(ADD);
   //background(0);
   if (transiting==false)
-    background(255);
+    background(0);
   float shakeGlitch = map(totalAmp, 0, 100000, 0, 15);
   //println(totalAmp);
   //if (random(shakeGlitch)<5) {
   //}
   soundCheck();  
-  float phase3CamXX = 500*sin(radians(frameCount));
-  float phase3CamYY = -300*abs(sin(radians(frameCount*0.73)));
+
+  if (frameCount%10==0) {
+    println(totalAmp);
+  }
+  float phase3CamXX = 0;
+  float phase3CamYY = 0;
 
   if (cameraMovingX) {
     phase3CamXX=500*sin(radians(frameCount));
@@ -19,9 +23,17 @@ void mode3() {
     phase3CamXX = 0;
   }
   if (cameraMovingY) {
-    phase3CamYY=500*sin(radians(frameCount));
+    phase3CamYY= -abs(200*sin(radians(frameCount*1.73)));
   } else {
-    phase3CamYY=0;
+    phase3CamYY= 0;
+  }
+
+  if (randomCam==true) {
+    if (randomCamTrigger==true) { 
+      phase3CamXX=random(-500, 500);
+      phase3CamYY=random(-200, 100);
+      randomCamTrigger=false;
+    }
   }
 
   phase3CamX += (phase3CamXX - phase3CamX *0.3);
