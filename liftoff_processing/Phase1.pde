@@ -30,7 +30,8 @@ void drawWaterRipple() {
 void ShowobservationStar() {
   if (ChangeObservationStar==true) {
     if (observationCount>1550)observationCount = 1550;
-    observationCount +=2;
+    //observationCount +=2;
+    observationCount = 1550;
     observateStarStartPoint = (int)random(observateStar.size()-observationCount);
     observateStarEndPointEasing =observateStarStartPoint;
     observateStarEndPoint = observateStarStartPoint+observationCount;

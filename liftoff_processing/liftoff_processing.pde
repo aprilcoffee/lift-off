@@ -22,10 +22,6 @@ MidiBus myBus; // The MidiBus
 boolean[] midiBusing;
 
 
-import ch.bildspur.postfx.builder.*;
-import ch.bildspur.postfx.pass.*;
-import ch.bildspur.postfx.*;
-
 //modeCheck
 int newHeight;
 int phase = 0;
@@ -180,8 +176,8 @@ String CPUperform="";
 int shabaMode2 = 0;
 void setup() {
   //size(, 600, P3D);
-  //size(1920, 1200, P3D);
-  fullScreen(P3D, 2);
+  size(1920, 1200, P3D);
+  //fullScreen(P3D, 2);
   frameRate(30);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
@@ -287,6 +283,9 @@ void setup() {
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
   phase = 0;
+}
+void keyReleased() {
+  saveFrame(frameCount+".jpg");
 }
 void draw() {  
   //hint(ENABLE_DEPTH_TEST);

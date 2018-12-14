@@ -100,7 +100,7 @@ void mode1() {
   image(observateStarBackground, 0, 0, width, height);
   //  if (random(5)>4)
   //   filter(INVERT);
-  
+
   popMatrix();
   noStroke();
 }
