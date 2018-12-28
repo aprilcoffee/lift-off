@@ -5,6 +5,16 @@ public void mode(int theA) {
     midiBusing[s]=false;
   }
 }
+void keyReleased() {
+  if (key=='0') {
+    targetSystemLineA = true; 
+    targetSystemLineB = false;
+  } else if (key=='1') {
+    targetSystemLineA = false;
+    targetSystemLineB = true;
+  } else if (key=='2')
+    targetSystemShow=true;
+}
 public void test(int theA, int theB) {
   /*
   targetSystemLineA
@@ -128,8 +138,6 @@ public void test(int theA, int theB) {
     case 12:
       phase2BWtrigger = true;
       break;
-      
-    
     }
   } else if (theA==3) {
     switch (theB) {
@@ -193,7 +201,8 @@ public void con(int theA, int theB, int theC) {
       cameraMovingY = returnOSC(theC);
       break;
     case 12:      
-      randomCam = returnOSC(theC);;
+      randomCam = returnOSC(theC);
+      ;
       break;
     }
   }

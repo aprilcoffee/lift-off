@@ -57,6 +57,7 @@ class TargetSystem {
   float xx, yy;
   float px, py;
   float rX, rY;
+  float fx, fy;
   float angle;
   float ori_v;
   float v;
@@ -115,19 +116,90 @@ class TargetSystem {
       fill(255);
       ellipse(0, 0, 5, 5);
       popMatrix();
-    } else if (targetSystemLineA==true) {
-      if (dir>0) {
-        for (int s=-50; s<=50; s+=4) {
-          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -50, 50, 0, 180))));
-          line(x-s, -height, x-s, height);
+    } else  if (targetSystemLineA==true) {
+      if (dir==1) {
+        colorMode(HSB);
+        int xx = int(x);
+        if (x - px> 0 ) {
+          int pxlength = (int)abs(map(x-px, 0, 4, 0, 100));
+          if (x - px>=4)pxlength=100;
+          for (int i=-pxlength; i<0; i+=3) {
+            float tempTrans;
+            if (i<0) {
+              tempTrans = map(i, -pxlength, 0, 0, 1);
+            } else {
+              tempTrans = map(i, 0, pxlength, 1, 0);
+            }
+            for (int j=0; j<height; j++) {
+              color ctemp = (color)scanBG.get((int)map(i+x+width/2, 0, width, 0, scanBG.width), (int)map(j, 0, height, 0, scanBG.height));
+              color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
+              set(i+xx+width/2, j, c);
+            }
+          }
+        } else {
+          int pxlength = (int)abs(map(x-px, -0, -4, 0, 100));
+          if (x-px<=-4)pxlength = 100;
+          for (int i=0; i<pxlength; i+=3) {
+            float tempTrans;
+            if (i<0) {
+              tempTrans = map(i, -pxlength, 0, 0, 1);
+            } else {
+              tempTrans = map(i, 0, pxlength, 1, 0);
+            }
+            for (int j=0; j<height; j++) {
+              color ctemp = (color)scanBG.get((int)map(i+x+width/2, 0, width, 0, scanBG.width), (int)map(j, 0, height, 0, scanBG.height));
+              color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
+              set(i+xx+width/2, j, c);
+            }
+          }
         }
+        colorMode(RGB);
+        stroke(255*abs(cos(radians(angle))), 0, 0);
+        line(x, -height/2, x, height/2);
+        px = xx;
       }
     } else if (targetSystemLineB==true) {
-      if (dir==-1)
-        for (int s=-50; s<=50; s+=4) {
-          stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -50, 50, 0, 180))));
-          line(-width, y-s, width, y-s);
+      if (dir==-1) {
+        colorMode(HSB);
+        int yy = int(y);
+        if (y - py> 0 ) {
+          int pylength = (int)abs(map(y-py, 0, 4, 0, 100));
+          if (y - py>=4)pylength=100;
+          for (int i=-pylength; i<0; i+=3) {
+            float tempTrans;
+            if (i<0) {
+              tempTrans = map(i, -pylength, 0, 0, 1);
+            } else {
+              tempTrans = map(i, 0, pylength, 1, 0);
+            }
+            for (int j=0; j<width; j++) {
+              color ctemp = (color)scanBG.get((int)map(j, 0, width, 0, scanBG.width), (int)map(i+y+height/2, 0, height, 0, scanBG.height));
+              color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
+              set(j, i+yy+height/2, c);
+            }
+          }
+        } else {
+          int pylength = (int)abs(map(y-py, -0, -4, 0, 100));
+          if (y-py<=-4)pylength = 100;
+          for (int i=0; i<pylength; i+=3) {
+            float tempTrans;
+            if (i<0) {
+              tempTrans = map(i, -pylength, 0, 0, 1);
+            } else {
+              tempTrans = map(i, 0, pylength, 1, 0);
+            }
+            for (int j=0; j<width; j++) {
+              color ctemp = (color)scanBG.get((int)map(j, 0, width, 0, scanBG.width), (int)map(i+y+height/2, 0, height, 0, scanBG.height));
+              color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
+              set(j, i+yy+height/2, c);
+            }
+          }
         }
+        colorMode(RGB);
+        stroke(255*abs(cos(radians(angle))), 0, 0);
+        line(-width/2, y, width/2, y);
+        py = yy;
+      }
     }
   }
 }
@@ -240,8 +312,7 @@ class SpaceImages {
       } else if (imageMode == 2) {
         image(imageGlitch(spaceImg[imageFlag]), 0, 0, imageSizeX, imageSizeY);
       }
-    } 
-    else if (phase1CornerCall==true || photoSpin==true) {
+    } else if (phase1CornerCall==true || photoSpin==true) {
       if (imageMode == 1) {
         image(spaceImgBW[imageFlag], 0, 0, imageSizeX, imageSizeY);
       } else if (imageMode == 2) {

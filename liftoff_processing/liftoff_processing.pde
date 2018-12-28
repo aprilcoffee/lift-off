@@ -2,10 +2,8 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-
 Runtime runtime;
 OperatingSystemMXBean operatingSystemMXBean;
-
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.signals.*;
@@ -13,14 +11,12 @@ import ddf.minim.effects.*;
 import oscP5.*;
 import netP5.*;
 import javax.sound.sampled.*;
-
 import themidibus.*; //Import the library
 
 OscP5 oscP5;
 NetAddress myRemoteLocation;
 MidiBus myBus; // The MidiBus
 boolean[] midiBusing;
-
 
 //modeCheck
 int newHeight;
@@ -50,6 +46,7 @@ boolean initVideoPlaying = false;
 int phase1Counter = 0;
 PImage[] spaceImg;
 PImage[] spaceImgBW;
+PImage scanBG;
 boolean photoTrigger = false;
 boolean photoTriggerImageRect = false;
 boolean photoTriggerImageBW = false;
@@ -171,7 +168,6 @@ float phase3CamY = 0;
 PFont font_trench;
 String CPUperform="";
 
-
 // shaba mode 2
 int shabaMode2 = 0;
 void setup() {
@@ -225,6 +221,7 @@ void setup() {
     spaceImg[s] = loadImage("space_imgs/"+(s+1)+".jpeg");
     spaceImgBW[s] = loadImage("space_imgsBW/"+(s+1)+".jpeg");
   } 
+  scanBG=loadImage("Telescope.jpg");
   ballCollection = new ArrayList();
   createStuff();
 
@@ -282,11 +279,9 @@ void setup() {
   }
   //operatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean();
   runtime = java.lang.Runtime.getRuntime();
-  phase = 0;
+  phase = 1;
 }
-void keyReleased() {
-  saveFrame(frameCount+".jpg");
-}
+
 void draw() {  
   //hint(ENABLE_DEPTH_TEST);
 
@@ -294,7 +289,7 @@ void draw() {
   //  println(str(frameRate));
   // }
 
-  translate(0, -70);
+  //  translate(0, -70);
   pushStyle();
   pushMatrix();
   if (transiting) {
@@ -352,25 +347,6 @@ void draw() {
   surface.setTitle(str(frameRate));
   popMatrix();
   popStyle();
-
-  if (phase==3) {
-  } else {
-    camera(width/2.0, height/2.0, (height/2.0) / tan(PI*30.0 / 180.0), width/2.0, height/2.0, 0, 0, 1, 0);
-    rectMode(CORNER);
-    blendMode(REPLACE);
-    colorMode(RGB);
-    hint(DISABLE_DEPTH_TEST);
-    noStroke();
-    fill(0);
-    //16:9 = 10:3 
-    //1920 : 1200 = 1920 : 576 
-    //1600 : 1000 = 1600 : 480
-    //rect(0, 0, width, (height - 3 * (width/10))/2);
-    //rect(0, height, width, -(height - 3 * (width/10))/2);
-    rect(0, 0, width, 260);
-    rect(0, height, width, -(height-824));
-  }
-  println(mouseY);
 }
 /*
 void keyPressed() {
