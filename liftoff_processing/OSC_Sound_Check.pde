@@ -5,16 +5,6 @@ public void mode(int theA) {
     midiBusing[s]=false;
   }
 }
-void keyReleased() {
-  if (key=='0') {
-    targetSystemLineA = true; 
-    targetSystemLineB = false;
-  } else if (key=='1') {
-    targetSystemLineA = false;
-    targetSystemLineB = true;
-  } else if (key=='2')
-    targetSystemShow=true;
-}
 public void test(int theA, int theB) {
   /*
   targetSystemLineA

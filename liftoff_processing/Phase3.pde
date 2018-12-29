@@ -22,11 +22,15 @@ void mode3C() {
     stroke(255);
     point(attractors[i].x, attractors[i].y);
   }
+  /*
   attractors[0].x = fftLin.getAvg(0)*movementScale*10;
-  attractors[0].y = fftLin.getAvg(3)*movementScale*2;
+   attractors[0].y = fftLin.getAvg(3)*movementScale*2;
+   */
+
+  attractors[0].x = mouseX;
+  attractors[0].y = mouseY;
   attractors[1].x = -1*fftLin.getAvg(0)*movementScale*10;
   attractors[1].y = -1*fftLin.getAvg(3)*movementScale*2;
-
   attractors[0].z = fftLin.getAvg(13)*movementScale*2;
   attractors[1].z = -1*fftLin.getAvg(13)*movementScale*2;
 
@@ -139,7 +143,7 @@ class Particle {
     //line(pos.x, pos.y, prevPos.x, prevPos.y);
     //colorMode(HSB, 255);
     //blendMode(ADD);
-    int showLength = (int)map(constrain(totalAmp, 0, 10000), 0, 10000, 0, trace.size());
+    int showLength = (int)map(constrain(totalAmp, 0, 1000), 0, 1000, 10, trace.size());
     //println(fftLin.getAvg(0));
     for (int s=traceLength-1; s>traceLength-showLength; s--) {
       if (colorCode<6) {
@@ -171,8 +175,6 @@ class Particle {
     acc.add(force);
   }
 }
-
-
 void drawTerrain() {
   pushMatrix();
   for (int y = rows-1; y >= 1; y--) {
@@ -283,7 +285,7 @@ void drawTerrain() {
         for (int x = 0; x < cols; x+=5) {
           stroke(255, map(y, rows, 0, 10, 80));
           //fill(255,0,0);
-          
+
           fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
@@ -357,7 +359,7 @@ void drawTerrain() {
           //noStroke();
           //fill(255,0,0);
           noStroke();
-         // println(fftLin.getBand(x*2));
+          // println(fftLin.getBand(x*2));
           fill(map(audioAmp[y]%10000, 0, 10000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 0, 50));
           //fill(map(audioAmp[y], 0, 5000, 0, 255), audioAmp[y], audioAmp[y], map(y, rows, 0, 10, 80));
           //fill(255);
@@ -458,7 +460,6 @@ class Ball {
         stroke(#ffffff, a/10);
         rectMode(CENTER);
         rect(loc.x, loc.y, 2, 2);
-        
       }
     }
     //println(countC);
