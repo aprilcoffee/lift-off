@@ -1,3 +1,18 @@
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import oscP5.*;
+import netP5.*;
+import javax.sound.sampled.*;
+import themidibus.*; //Import the library
+Runtime runtime;
+OperatingSystemMXBean operatingSystemMXBean;
+OscP5 oscP5;
+NetAddress myRemoteLocation;
+MidiBus myBus; // The MidiBus
+Midi midi;
+String CPUperform="";
 
 void setup() {
   size(1200, 1200, P3D);
