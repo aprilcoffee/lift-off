@@ -1,4 +1,3 @@
-
 void midiContollerInit() {
   MidiBus.list();
   myBus = new MidiBus(this, "Launch Control XL", "Launch Control XL");

@@ -1,6 +1,6 @@
 public void mode(int theA) {
 }
-public void test(int theA, int theB) {
+public void sig(int theA, int theB) {
   /*
   targetSystemLineA
    targetSystemLineB
@@ -11,6 +11,9 @@ public void test(int theA, int theB) {
    ChangeObservationStar
    photoTriggerImage
    */
+  //println(theA, theB);
+  
+  signalChange[theA][theB] = !signalChange[theA][theB];
   if (theA == 1) {
     switch(theB) {
     case 0:
@@ -30,7 +33,7 @@ public void test(int theA, int theB) {
     case 7:
       break;
     case 8:
-     
+
       break;
     case 9:
       break;
@@ -83,25 +86,6 @@ public void test(int theA, int theB) {
     case 11:
       break;
     case 12:
-      break;
-    }
-  } else if (theA==3) {
-    switch (theB) {
-    case 0:
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 6:
-      break;
-    case 7:
-      break;
-    case 8:
-      break;
-    case 9:
-      break; 
-    case 10:
       break;
     }
   }
@@ -189,5 +173,10 @@ void noteOff(int channel, int pitch, int velocity) {
    }*/
 }
 void soundCheck() {
-
+  fft.analyze();
+  input.amp(1);
+  volume = loudness.analyze();
+  volume*=1000;
+  //println(volume);
+  volume = norm(volume, 0, 100);
 }

@@ -1,0 +1,691 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+Runtime runtime;
+Minim minim;
+AudioInput in;
+BeatDetect analyisBeat;
+BeatDetect beat;
+BeatListener bl;
+FFT fftLin;
+Midi midi;
+import processing.video.*;
+
+
+Geometry[][] geometry;
+int total =70;
+float geometryR = 375;
+PGraphics orbitTexture;
+PImage[] planetImage;
+int planetImageLength = 6;
+int currentPlanetImage = 0;
+int newLonMinHalf = 0;    
+int newLonMaxHalf = 0; 
+int newLatMinHalf = 0;    
+int newLatMaxHalf = 0;   
+float phase3moveA; 
+float phase3moveT;
+int phase2Counter = 0;
+boolean flyAway = false;
+boolean changeGeometryMove=false;
+int flyI=0;
+int flyJ=0;
+int flyingAwayCount = 0;
+int shabaMode2 = 0;
+
+float m =5;
+float n1 = 300;
+float n2 = 400;
+float n3 = 100;
+int geoCount=0;
+
+boolean showAllgeo = false;
+boolean textureOn = false;
+boolean crashSide = false;
+boolean showHalf = false;
+boolean showHalfTrigger = false;
+boolean startMove = false;
+boolean changeTexture = false;
+boolean geoMoving = false;
+boolean resetGeoLocation = false;
+boolean explosion = false;
+
+
+void planetInit(PGraphics P) {
+  orbitTexture = createGraphics(600, 600, P3D);
+  planetImage = new PImage[planetImageLength];
+  for (int s=0; s<planetImageLength; s++) {
+    planetImage[s] = loadImage("planet"+s+".jpeg");
+  }
+  geometry = new Geometry[total+1][total+1];
+  geometryInit();
+  //P.beginDraw();
+  //P.endDraw();
+}
+void beatCheck() {
+  showHalf = isBeat;
+  showHalfTrigger = isBeat;
+
+  changeTexture = isHat;
+  
+  textureOn = isHat;
+
+  if (midi.control[7][1] > 64) {
+    showAllgeo = true;  
+    crashSide = isKick;
+  } else {
+    showAllgeo = false;
+    showHalf = isKick;
+    showHalfTrigger = isKick;
+  }
+}
+PGraphics drawPlanet(PGraphics P) {
+
+
+  //imageMode(CENTER);
+  //hint(DISABLE_DEPTH_TEST);
+
+  beatCheck();
+
+  pushMatrix();
+  pushStyle();
+  P.beginDraw();
+  P.background(0, 0);
+  P.blendMode(BLEND);
+  P.hint(ENABLE_DEPTH_TEST);
+  phase3moveA=89*sin(radians(frameCount*2.173));
+  phase3moveT=89*sin(radians(frameCount*0.489));
+  phase2Counter++;
+  float camR = 1500;
+  float camX = camR * sin(radians(phase3moveA)*cos(radians(phase3moveT)));
+  float camY = camR * sin(radians(phase3moveT));
+  float camZ = camR * cos(radians(phase3moveA)*cos(radians(phase3moveT)));
+  P.camera(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+  if (isBeat) {
+    P.translate(random(-60, 60), random(-60, 60));
+  }
+  orbitTextureDraw(orbitTexture);
+  //drawTerrainInGraphics(orbitTexture);
+  resetSphereLocation();
+
+  if (explosion==true) {
+    for (int i=0; i<total; i++) {
+      float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+      float r2 = superShape(lat, m, n1, n2, n3);
+      for (int j=0; j<total; j++) {
+        // lat -Pi/2 ~ Pi/2
+        // lon -PI ~ PI
+        float lon = map(j, 0, total, -PI, PI);
+        float r1 = superShape(lon, m, n1, n2, n3);
+        geometry[i][j].exploded(r1, r2, i, j);
+      }
+    }
+  } else {
+    if (flyAway==true) {
+      flyingAwayCount +=15;
+      if (flyingAwayCount >= (total-30)*(total-30))flyingAwayCount = (total-30)*(total-30);
+      for (int s=0; s<flyingAwayCount; s++) {
+        flyI = (int)random(total);
+        flyJ = (int)random(total);
+        geometry[flyI][flyJ].flying=true;
+        flyAway=false;
+      }
+    }
+    if (crashSide==true) {
+      //resetSphereLocation();
+      int newLonMin = (int)random(total);    
+      int newLonMax = (int)random(total);    
+
+      if (newLonMin > newLonMax) {
+        int temp = newLonMin;
+        newLonMin = newLonMax;
+        newLonMax = temp;
+      }
+      int newLatMin = (int)random(total);    
+      int newLatMax = (int)random(total);
+      if (newLatMin > newLatMax) {
+        int temp = newLatMin;
+        newLatMin = newLatMax;
+        newLatMax = temp;
+      }
+      float temp_newR = geometryR + random(8000 * norm(midi.control[7][1], 64, 128));
+      for (int i=newLatMin; i<newLatMax; i++) {
+        float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+        float r2 = superShape(lat, m, n1, n2, n3);
+        for (int j=newLonMin; j<newLonMax; j++) {
+          // lat -Pi/2 ~ Pi/2
+          // lon -PI ~ PI
+          float lon = map(j, 0, total, -PI, PI);
+          float r1 = superShape(lon, m, n1, n2, n3);
+          geometry[i][j].setNewLocation(r1, r2, i, j, temp_newR+random(-20, 20));
+        }
+      }
+      crashSide = false;
+    }
+    //noStroke();
+    else if (showHalfTrigger==true) {
+      newLonMinHalf = (int)random(total);  
+      int tempMax;
+      if (random(2)<1) {
+        tempMax = int(phase2Counter*0.01);
+      } else tempMax = -int(phase2Counter*0.01);
+      newLonMaxHalf = newLonMinHalf + tempMax;    
+      if (newLonMaxHalf > total)newLonMaxHalf=total-1;
+      if (newLonMaxHalf < 0)newLonMaxHalf=0;
+
+      //if (phase2Counter*0.001 < 3) {
+      //  shabaMode2 = int(random(phase2Counter*0.001));
+      //} else {
+      //  shabaMode2 = int(random(3));
+      //}
+
+      if (newLonMinHalf > newLonMaxHalf) {
+        int temp = newLonMinHalf;
+        newLonMinHalf = newLonMaxHalf;
+        newLonMaxHalf = temp;
+      }
+      newLatMinHalf = (int)random(total);    
+      newLatMaxHalf = (int)random(total);
+      if (newLatMinHalf > newLatMaxHalf) {
+        int temp = newLatMinHalf;
+        newLatMinHalf = newLatMaxHalf;
+        newLatMaxHalf = temp;
+      }
+      //println(newLatMinHalf, newLatMaxHalf);
+      showHalfTrigger=false;
+    }
+  }
+
+  shabaMode2 = int(map(midi.control[7][0], 0, 127, 0, 3));
+
+  if (showAllgeo==true) {
+    for (int i=0; i<total; i++) {
+      for (int j=0; j<total; j++) {
+        //for (int i=0; i<total; i++) {
+        //  for (int j=0; j<total; j++) {
+        geometry[i][j].update();
+        geometry[i][j].show(
+          geometry[i+1][j].globeTexture, 
+          geometry[i][j+1].globeTexture, 
+          geometry[i+1][j+1].globeTexture, 
+          shabaMode2, 
+          P
+          );
+      }
+    }
+  } else if (showHalf==true) {
+    for (int i=newLatMinHalf; i<newLatMaxHalf; i++) {
+      for (int j=newLonMinHalf; j<newLonMaxHalf; j++) {
+        //for (int i=0; i<total; i++) {
+        //  for (int j=0; j<total; j++) {
+        geometry[i][j].update();
+        geometry[i][j].show(
+          geometry[i+1][j].globeTexture, 
+          geometry[i][j+1].globeTexture, 
+          geometry[i+1][j+1].globeTexture, 
+          shabaMode2, 
+          P
+          );
+      }
+    }
+  }
+
+
+  if (resetGeoLocation==true) { 
+    for (int i=0; i<total; i++) {
+      float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+      float r2 = superShape(lat, m, n1, n2, n3);
+      for (int j=0; j<total; j++) {
+        // lat -Pi/2 ~ Pi/2
+        // lon -PI ~ PI
+        float lon = map(j, 0, total, -PI, PI);
+        float r1 = superShape(lon, m, n1, n2, n3);
+        geometry[i][j].resetLocation(r1, r2, i, j);
+      }
+    }
+    resetGeoLocation=false;
+  }
+  /*else {
+   for (int i=0; i<total; i++) {
+   for (int j=0; j<total; j++) {
+   //for (int i=0; i<total; i++) {
+   //  for (int j=0; j<total; j++) {
+   geometry[i][j].update();
+   geometry[i][j].show(
+   geometry[i+1][j].globeTexture, 
+   geometry[i][j+1].globeTexture, 
+   geometry[i+1][j+1].globeTexture, 
+   shabaMode2
+   );
+   }
+   }
+   }*/
+  //changSuperShape();
+  //image(orbitTexture,width/2,height/2,width,height);
+  //iP.endDraw();
+
+  P.endDraw();
+  popMatrix();
+  popStyle();
+  return P;
+}
+
+void changSuperShape() {
+  //m = 3;
+  //n1 = 3;
+  //n2 = 4+3.53*cos(radians(frameCount*6));
+  //n3 = 1.732+5*sin(radians(frameCount/7.3));
+  if (geoMoving==true) {
+    geoCount+=10;
+  }
+  m = 3;
+  n1 = 10;
+  n2 = 15;
+  n3 = 5+15*sin(radians(frameCount));
+}
+float superShape(float theta, float m, float n1, float n2, float n3) {
+  float a=1;
+  float b=1;
+  //float r = 1;
+  float t1 = abs((1/a)*cos(m*theta/4));
+  t1 = pow(t1, n2);
+  float t2 = abs((1/b)*sin(m*theta/4));
+  t2 = pow(t2, n3);
+  float t3 = t1+t2;
+  float r = pow(t3, -1/n1);
+
+  if (startMove)
+    return r;
+  else 
+  return 1;
+}
+void orbitTextureDraw(PGraphics P) {
+  P.beginDraw();
+  P.tint(255);
+  P.background(0, 0);
+  if (changeTexture==true) {
+    currentPlanetImage = (int)random(5);
+    changeTexture = false;
+  }
+  P.image(planetImage[currentPlanetImage], 0, 0, P.width, P.height);
+  P.endDraw();
+}
+void geometryInit() {
+
+  for (int i=0; i<=total; i++) {
+    float r = geometryR;
+    float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+    float r2 = superShape(lat, m, n1, n2, n3);
+    for (int j=0; j<=total; j++) {
+      float lon = map(j, 0, total, -PI, PI);
+      float r1 = superShape(lon, m, n1, n2, n3);
+
+      PVector[] temp = new PVector[6];
+      //r = 200;
+      float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+      temp[0] = new PVector(x1, y1, z1);
+
+      float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      temp[1] = new PVector(x2, y2, z2);
+
+      float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+      temp[2] = new PVector(x3, y3, z3);
+
+      //r =200;
+      float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      temp[3] = new PVector(x4, y4, z4);
+
+      float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+      float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+      temp[4] = new PVector(x5, y5, z5);
+
+      float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+      temp[5] = new PVector(x6, y6, z6);
+
+      geometry[i][j] = new Geometry(i, j, temp);
+    }
+  }
+}
+
+class Geometry {
+  PVector[] globe;
+  PVector[] globeTar;
+  int globeTint;
+  PVector globeTexture;
+
+  int ii, jj;
+  float r;
+
+  boolean flying = false;
+  float flyingR1;
+  float flyingR2;
+
+  float explosionR1;
+  float explosionR2;
+
+  float R2;
+  float R1;
+  PVector center1;
+  PVector center2;
+  Geometry(int ei, int ej, PVector[] eglobeTar) {
+
+    center1 = new PVector();
+    center2 = new PVector();
+    ii = ei;
+    jj = ej;
+    globeTar = eglobeTar;
+    //globe = eglobeTar;
+    globe = new PVector[6];
+    globeTexture = new PVector(float(ii)/total, float(jj)/total);
+    globeTint = 255;
+    for (int s=0; s<6; s++) {
+      globe[s] = new PVector(0, 0, 0);
+    }
+    flyingR1 = 800;
+    flyingR2 = 800;
+
+    explosionR1 = geometryR + random(-300, 3000);
+    explosionR2 = geometryR + random(-300, 3000);
+
+    R1 = geometryR;
+    R2 = geometryR;
+  }
+  void update() {
+    if (flying==true) {
+      float lat = map(ii, 0, total, -HALF_PI, HALF_PI);
+      float r2 = superShape(lat, m, n1, n2, n3);
+      float lon = map(jj, 0, total, -PI, PI);
+      float r1 = superShape(lon, m, n1, n2, n3);
+      flyingR1 = geometryR+random(1200);
+      flyingR2 = geometryR+random(1200);
+      flyAway(r1, r2, flyI, flyJ, flyingR1, flyingR2);
+      flying=false;
+    }
+    for (int s=0; s<6; s++) {
+      globe[s].add((PVector.sub(globeTar[s], globe[s])).mult(0.1));
+    }
+  }
+
+  void show(PVector tempRight, PVector tempDown, PVector tempRightDown, int showMode, PGraphics P) {
+    if (showMode == 0) {
+      P.noFill();
+    } else if (showMode == 1) {
+      P.noFill();
+    } else if (showMode == 2) {
+      P.fill(255, 150 * f_total);
+    } else if (showMode == 3) {
+      P.fill(255, 100);
+    }
+    P.pushMatrix();
+    if (showMode == 1 && textureOn!=true) {
+      P.beginShape(POINTS);
+    } else {
+      P.beginShape(TRIANGLE_STRIP);
+    }
+
+    if (showMode == 0) {
+      P.stroke(255, 150);
+      //strokeWeight(0.5);
+    } else if (showMode == 1) {
+      P.stroke(255, 150);
+    } else if (showMode == 2) {
+      P.noStroke();
+    } else if (showMode == 3) {
+      P.noStroke();
+      P.texture(orbitTexture);
+    }
+    P.textureMode(NORMAL);
+
+    if (explosion) {
+      P.translate(center1.x, center1.y, center1.z);
+      P.rotate(radians(frameCount+ii+jj));
+      float tempX, tempY, tempZ;
+
+      P.scale(0.3);
+      P.vertex(globe[0].x-center1.x, globe[0].y-center1.y, globe[0].z-center1.z, globeTexture.y, globeTexture.x);
+      P.vertex(globe[1].x-center1.x, globe[1].y-center1.y, globe[1].z-center1.z, tempRight.y, tempRight.x);
+      P.vertex(globe[2].x-center1.x, globe[2].y-center1.y, globe[2].z-center1.z, tempDown.y, tempDown.x);
+    } else {
+      P.vertex(globe[0].x, globe[0].y, globe[0].z, globeTexture.y, globeTexture.x);
+      P.vertex(globe[1].x, globe[1].y, globe[1].z, tempRight.y, tempRight.x);
+      P.vertex(globe[2].x, globe[2].y, globe[2].z, tempDown.y, tempDown.x);
+    }
+    P.endShape(CLOSE);
+
+    if (showMode == 1&&textureOn!=true) {
+      P.beginShape(POINTS);
+    } else {
+      P.beginShape(TRIANGLE_STRIP);
+    }
+    if (showMode == 0) {
+      P.stroke(255, 150);
+      //strokeWeight(0.5);
+    } else if (showMode == 1) {
+      P.stroke(255, 200);
+    } else if (showMode == 2) {
+      P.noStroke();
+    } else if (showMode == 3) {
+      P.noStroke();
+      P.texture(orbitTexture);
+    }
+    if (explosion) {
+      P.translate(center2.x, center2.y, center2.z);
+      P.rotate(radians(frameCount+ii+jj));
+      float tempX, tempY, tempZ;
+
+      //tempX= 
+      P.scale(0.3);
+      P.vertex(globe[3].x-center2.x, globe[3].y-center2.y, globe[3].z-center2.z, globeTexture.y, globeTexture.x);
+      P.vertex(globe[4].x-center2.x, globe[4].y-center2.y, globe[4].z-center2.z, tempRight.y, tempRight.x);
+      P.vertex(globe[5].x-center2.x, globe[5].y-center2.y, globe[5].z-center2.z, tempDown.y, tempDown.x);
+    } else {
+      P.vertex(globe[3].x, globe[3].y, globe[3].z, globeTexture.y, globeTexture.x);
+      P.vertex(globe[4].x, globe[4].y, globe[4].z, tempRight.y, tempRight.x);
+      P.vertex(globe[5].x, globe[5].y, globe[5].z, tempDown.y, tempDown.x);
+    }
+    P.endShape(CLOSE);
+
+    P.popMatrix();
+  }
+  void exploded(float r1, float r2, float i, float j) {
+    r = explosionR1;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+    PVector center1 = new PVector((x1+x2+x3)/3, (y1+y2+y3)/3, (z1+z2+z3)/3);
+
+
+    r = explosionR2;
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    PVector center2 = new PVector((x4+x5+x6)/3, (y4+y5+y6)/3, (z4+z5+z6)/3);
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
+  void flyAway(float r1, float r2, float i, float j, float flyingR1, float flyingR2) {
+    r = flyingR1;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+    PVector center1 = new PVector((x1+x2+x3)/3, (y1+y2+y3)/3, (z1+z2+z3)/3);
+
+    r = flyingR2;
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    PVector center2 = new PVector((x4+x5+x6)/3, (y4+y5+y6)/3, (z4+z5+z6)/3);
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
+  void setNewLocation(float r1, float r2, float i, float j, float er) {
+    r = er;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    r = er+random(-800, 800);
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
+  void renewLocation(float r1, float r2, float i, float j) {
+    r = R1;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    r = R2;
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
+  void resetLocation(float r1, float r2, float i, float j) {
+    r = geometryR;
+    float x1 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y1 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z1 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x2 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y2 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z2 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x3 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y3 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z3 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    r = geometryR;
+    float x4 = r*r1*cos(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y4 = r*r1*sin(map(j, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z4 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    float x5 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float y5 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i, 0, total, -HALF_PI, HALF_PI));
+    float z5 = r*r2*sin(map(i, 0, total, -HALF_PI, HALF_PI));
+
+    float x6 = r*r1*cos(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float y6 = r*r1*sin(map(j+1, 0, total, -PI, PI))*r2*cos(map(i+1, 0, total, -HALF_PI, HALF_PI));
+    float z6 = r*r2*sin(map(i+1, 0, total, -HALF_PI, HALF_PI));
+
+    globeTar[0] = new PVector(x1, y1, z1);
+    globeTar[1] = new PVector(x2, y2, z2);
+    globeTar[2] = new PVector(x3, y3, z3);
+    globeTar[3] = new PVector(x4, y4, z4);
+    globeTar[4] = new PVector(x5, y5, z5);
+    globeTar[5] = new PVector(x6, y6, z6);
+  }
+  void press() {
+  }
+}
+
+void resetSphereLocation() {
+  for (int i=0; i<total; i++) {
+    float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+    float r2 = superShape(lat, m, n1, n2, n3);
+    for (int j=0; j<total; j++) {
+      // lat -Pi/2 ~ Pi/2
+      // lon -PI ~ PI
+      float lon = map(j, 0, total, -PI, PI);
+      float r1 = superShape(lon, m, n1, n2, n3);
+      geometry[i][j].renewLocation(r1, r2, i, j);
+    }
+  }
+}
