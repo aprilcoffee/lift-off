@@ -68,4 +68,25 @@ void mode1() {
       //P.randomSphere();
     }
   }
+
+
+  if (volume>0.5)
+    fx.render()
+      .sobel()
+      //.bloom(0.1, 20, 30)
+      //.blur(10, 0.5)
+      //.toon()
+      .brightPass(0.1)
+      .blur(20, 30)
+      .compose();
+
+  else
+    fx.render()
+      //.sobel()
+      //.bloom(0.2, 20, 30)
+      //.toon()
+      //.brightPass(1)
+      .blur(20, 30)
+      //.blur(1, 0.001)
+      .compose();
 }

@@ -1,4 +1,4 @@
-//For CPU monitoring 
+//CPU monitoring 
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.lang.reflect.Method;
@@ -6,7 +6,7 @@ import java.lang.reflect.Modifier;
 Runtime runtime;
 OperatingSystemMXBean operatingSystemMXBean;
 
-//Sound Controll from MAX & Controller
+//Sound Control from MAX & Controller
 import oscP5.*;
 import netP5.*;
 import themidibus.*; //Import the library
@@ -56,6 +56,9 @@ int transition0to1Dark = 0;
 int transition1to2Dark = 0;
 int transition2to3Dark = 0;
 int transition3to0Dark = 0;
+int modeFrameCount[];
+
+
 
 //initPhase
 PImage LTGlogo;
@@ -100,6 +103,8 @@ void setup() {
     }
   }
 
+
+  //basic Setup
   codeText= loadStrings("codetext.txt");  
   font_trench = createFont("font/trench100free.ttf", 32);   
   textFont(font_trench);
@@ -108,6 +113,12 @@ void setup() {
   frameRate(30);
   textAlign(CORNER);
   rectMode(CENTER);
+
+  //FrameCount
+  modeFrameCount = new int[8];
+  for(int s=0;s<8;s++){
+    modeFrameCount[s] = 0;
+  }
 
   //initPhase
   LTGlogo = loadImage("LTG.png");
@@ -140,37 +151,6 @@ void draw() {
 
 
   mode1();
-
-  /*
-  for (int y=0; y<; y++) {
-   boolean flag = false;
-   fill(100, 255, 100);
-   if (y == floor(abs(100*sin(radians(frameCount/3))))-1)
-   for (int x=0; x<codeText[y].length(); x++) {
-   text(codeText[y].charAt(x), 10+x*8, abs(frameCount/3) + y*11);
-   } else {
-   text(codeText[y], 0, y*11);
-   }
-   }*/
-  if (volume>0.5)
-    fx.render()
-      .sobel()
-      //.bloom(0.1, 20, 30)
-      //.blur(10, 0.5)
-      //.toon()
-      .brightPass(0.1)
-      .blur(20, 30)
-      .compose();
-
-  else
-    fx.render()
-      //.sobel()
-      //.bloom(0.2, 20, 30)
-      //.toon()
-      //.brightPass(1)
-      .blur(20, 30)
-      //.blur(1, 0.001)
-      .compose();
 
 
   //Showing FPS performance && Garbage Collecting
