@@ -59,7 +59,6 @@ int transition3to0Dark = 0;
 int modeFrameCount[];
 
 
-
 //initPhase
 PImage LTGlogo;
 PImage glitchBG;
@@ -116,7 +115,7 @@ void setup() {
 
   //FrameCount
   modeFrameCount = new int[8];
-  for(int s=0;s<8;s++){
+  for (int s=0; s<8; s++) {
     modeFrameCount[s] = 0;
   }
 
@@ -150,13 +149,27 @@ void draw() {
   background(0);
 
 
+  switch(phase) {
+  case 0:
+    initPhase();
+    break;
+  case 1:
+    mode1();
+    break;
+  case 2:
+    mode2();
+    break;
+  case 3:
+    mode3();
+    break;
+  
+  }
   mode1();
 
 
   //Showing FPS performance && Garbage Collecting
   if (frameCount % 3600 ==0)runtime.gc();
   surface.setTitle(str(frameRate));
-
 
   //Signal Reset
   for (int y=0; y<20; y++) {
