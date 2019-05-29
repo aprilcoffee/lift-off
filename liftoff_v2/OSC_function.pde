@@ -1,115 +1,58 @@
 public void mode(int theA) {
 }
 public void sig(int theA, int theB) {
-  /*
-  targetSystemLineA
-   targetSystemLineB
-   targetSystemShow
-   photoTrigger //ShowImageGrid
-   photoKill
-   waterTrigger
-   ChangeObservationStar
-   photoTriggerImage
-   */
-  //println(theA, theB);
-  
-  signalChange[theA][theB] = !signalChange[theA][theB];
-  if (theA == 1) {
+  SG[theA][theB] = true;
+
+  if (theA==2) {
     switch(theB) {
     case 0:
+      SG[2][1] = false;
       break;
     case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-    case 6:
-      break;
-    case 7:
-      break;
-    case 8:
-
-      break;
-    case 9:
-      break;
-    case 10:
-      break;
-    case 11:
-      break;
-    case 12:
-      break;
-    case 13:
-      break;
-    case 14:
+      SG[2][0] = false;
       break;
     }
-  } 
+  }
   /*
-  addStarTrigger
-   showHalf //together
-   showHalfTrigger //together
-   showAllgeo
-   changeTexture
-   textureOn
-   crashSide
-   startMove
+  Phase2
+   [2][0] targetSystemLineA 
+   [2][1] targetSystemLineB
+   [2][2] targetSystemShow
+   [2][3] photoTrigger //ShowImageGrid
+   [2][4] photoKill
+   [2][5] waterTrigger
+   [2][6] ChangeObservationStar
+   [2][7] photoTriggerImage
+   [2][8] photoSpin
+   [2][9] phase1CornerCall
+   [2][10] spinMoveFaster
+   
+   Phase4
+   [4][0] addStarTrigger
+   [4][1] showHalf //together
+   [4][2] showHalfTrigger //together
+   [4][3] showAllgeo
+   [4][4] changeTexture
+   [4][5] textureOn
+   [4][6] crashSide
+   [4][7] startMove
    */
-  else if (theA==2) {
-    switch(theB) {
-    case 0:        
-      break;
-    case 1:
-      break;
-    case 2:
-      break;
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-    case 6:
-      break;
-    case 7:
-      break;
-    case 8:
-      break;    
-    case 9:
-      break;  
-    case 10:
-      break;
-    case 11:
-      break;
-    case 12:
-      break;
-    }
-  }
 }
-
 public void con(int theA, int theB, int theC) {
-  println(theA, theB, theC);
-  if (theA==3) {
-    switch (theB) {
-    case 3:
-      break;
-    case 4:
-      break;
-    case 5:
-      break;
-    case 9:
-    case 10:
-      break;
-    case 11:      
-      break;
-    case 12:      
-      break;
-    }
+  CN[theA][theB] = theC;
+  if (theA==2 && theB==1) {
+    glitchReset();
   }
+  /*
+  Phase2
+   [2][0] 0 photoTriggerImageRect
+   [2][0] 1 photoTriggerImageBW
+   [2][0] 2 photoTriggerImage
+   
+   [2][1] 0 glitchTrigger
+   [2][1] 1 glitchReset
+   
+   */
 }
 boolean returnOSC(int input) {
   if (input==0)return false;
@@ -126,7 +69,7 @@ void noteOff(int channel, int pitch, int velocity) {
   //println("Velocity:"+velocity);
 
   /*
-  OscMessage myMessage = new OscMessage("/test");
+   OscMessage myMessage = new OscMessage("/test");
    myMessage.add(phase);
    if (channel==0) {
    if (pitch>=96 && pitch<=103) {

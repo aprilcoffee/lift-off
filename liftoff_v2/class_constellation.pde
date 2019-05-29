@@ -10,7 +10,6 @@ class Particle {
     cor_y = _cor_y;
     pos = PVector.mult(PVector.random3D(), width);
     ppos = PVector.mult(PVector.random3D(), width);
-
     //ppos.x = floor(random(width));
     //ppos.y = floor(random(height));
     randomlize();
