@@ -29,11 +29,12 @@ void drawWaterRipple() {
 }
 void ShowobservationStar() {
   if (SG[2][6]==true) {
+    
+    observationCount = modeFrameCount[2]*2+100;
     if (observationCount>1550)observationCount = 1550;
-    //observationCount +=2;
-    observationCount = 1550;
+
     observateStarStartPoint = (int)random(observateStar.size()-observationCount);
-    observateStarEndPointEasing =observateStarStartPoint;
+    observateStarEndPointEasing = observateStarStartPoint;
     observateStarEndPoint = observateStarStartPoint+observationCount;
     SG[2][6]=false;
   }

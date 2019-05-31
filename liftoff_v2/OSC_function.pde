@@ -1,4 +1,9 @@
+
+public void bpm(int theA) {
+  currentBeat = theA;
+}
 public void mode(int theA) {
+  phase = theA;
 }
 public void sig(int theA, int theB) {
   SG[theA][theB] = true;

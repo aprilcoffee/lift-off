@@ -1,5 +1,9 @@
 void mode4() {
+  pushMatrix();
   background(0);
+  
+  
+  modeFrameCount[4]++;
   camera(300, 400, 1000, 0, 0, 0, 0, 1, 0);
   if (SG[4][0]) {
 
@@ -82,4 +86,6 @@ void mode4() {
       .blur(20, 30)
       //.blur(1, 0.001)
       .compose();
+
+  popMatrix();
 }

@@ -29,6 +29,7 @@ float[] sum = new float[band];
 int scale = 5;
 float barWidth;
 float volume;
+int currentBeat = 0;
 
 
 //Shader PostFix
@@ -119,8 +120,9 @@ int flag = 0;
 
 
 void setup() {
-  //size(1920, 1080, P3D);
-  fullScreen(P3D);
+  // size(3840, 2160, P3D);
+  size(1920, 1080, P3D);
+  //fullScreen(P3D);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
 
@@ -142,7 +144,8 @@ void setup() {
   oscP5.plug(this, "sig", "/sig");
   oscP5.plug(this, "mode", "/mode");  
   oscP5.plug(this, "control", "/control");  
-  oscP5.plug(this, "linear", "/linear");  
+  oscP5.plug(this, "linear", "/linear");    
+  oscP5.plug(this, "bpm", "/bpm");  
   SG = new boolean[10][20];
   for (int y=0; y<20; y++) {
     for (int x=0; x<10; x++) {
@@ -213,8 +216,8 @@ void setup() {
 
 
   particle = new ArrayList<Particle>();
-  for (int x=0; x<=width; x+=20) {
-    for (int y=0; y<=height; y+=20) {
+  for (int x=0; x<=width; x+=60) {
+    for (int y=0; y<=height; y+=60) {
       particle.add(new Particle(x, y));
     }
   }  
@@ -231,13 +234,11 @@ void setup() {
   explosion = false;
 
   runtime = java.lang.Runtime.getRuntime();  
-  phase = 2;
+  phase = 0;
 }
 void draw() {
   soundCheck();
-  background(0);
-
-
+  //background(0);
   switch(phase) {
   case 0:
     initPhase();
@@ -255,7 +256,7 @@ void draw() {
     mode4();
     break;
   case 5:
-    //mode5();
+    mode5();
     break;
   }
   //mode1();

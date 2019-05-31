@@ -1,5 +1,7 @@
 void mode2() { 
   pushMatrix();
+  
+  modeFrameCount[2]++;
   background(0);
   //previousWater[(int)random(200)][(int)random(200)] = 255;
   translate(width/2, height/2);

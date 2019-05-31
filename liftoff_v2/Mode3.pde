@@ -1,4 +1,8 @@
 void mode3() {
+  background(0);
+  
+  modeFrameCount[3]++;
+  pushMatrix();
   camera(width/2.0 + camShakeX, 
     height/2.0 + camShakeY, 
     (height/2.0) / tan(PI*30.0 / 180.0)+camShakeZ, 
@@ -10,7 +14,6 @@ void mode3() {
     //abs(camShakeZZ-camShakeZ)<10
     ) 
   {
-
     camShakeXX = random(-200, 200);
     camShakeYY = random(-200, 200);
     camShakeZZ = random(-500, 500);
@@ -20,15 +23,16 @@ void mode3() {
 
     SG[3][0] = false;
   }
-  camShakeX += (camShakeXX-camShakeX)*0.4;
-  camShakeY += (camShakeYY-camShakeY)*0.4;
-  camShakeZ += (camShakeZZ-camShakeZ)*0.4;
+  camShakeX += (camShakeXX-camShakeX)*0.25;
+  camShakeY += (camShakeYY-camShakeY)*0.25;
+  camShakeZ += (camShakeZZ-camShakeZ)*0.25;
 
 
-  if (SG[0][0]==true) {
+  if (SG[3][1]==true) {
     for (int s=0; s<6; s++) {
       constellation[s] = floor(random(particle.size()));
     }
+    SG[3][1]=false;
   }
 
   for (int s=0; s<particle.size(); s++) {
@@ -49,8 +53,7 @@ void mode3() {
     line(P.pos.x, P.pos.y, P.pos.z, 
       PP.pos.x, PP.pos.y, PP.pos.z
       );
-
-    vertex(P.pos.x, P.pos.y, P.pos.z);
+    //vertex(P.pos.x, P.pos.y, P.pos.z);
   }
 
   stroke(135, 0);
@@ -62,17 +65,38 @@ void mode3() {
   endShape();
 
 
-  if (SG[0][0]==true) {
+  if (SG[3][2]==true) {
+    for (int s=0; s<particle.size(); s++) {
+      Particle P = particle.get(s);
+      P.returnToGrid();
+      //P.randomlize();
+      //P.randomSphere();
+    }
+    SG[3][2]=false;
+  }
+
+  if (SG[3][3]==true) {
     for (int s=0; s<particle.size(); s++) {
       Particle P = particle.get(s);
       //P.returnToGrid();
       P.randomlize();
       //P.randomSphere();
     }
+    SG[3][3]=false;
+  }
+  if (SG[3][4]==true) {
+    for (int s=0; s<particle.size(); s++) {
+      Particle P = particle.get(s);
+      //P.returnToGrid();
+      //P.randomlize();
+      P.randomSphere();
+    }
+    SG[3][4]=false;
   }
 
 
-  if (volume>0.5)
+
+  if (volume>0.35)
     fx.render()
       .sobel()
       //.bloom(0.1, 20, 30)
@@ -91,4 +115,7 @@ void mode3() {
       .blur(20, 30)
       //.blur(1, 0.001)
       .compose();
+      
+      
+  popMatrix();
 }

@@ -1,5 +1,10 @@
 void initPhase() {
   background(0);
+  camera(width/2.0 + camShakeX, 
+    height/2.0 + camShakeY, 
+    (height/2.0) / tan(PI*30.0 / 180.0)+camShakeZ, 
+    width/2.0, height/2.0, 0, 
+    0, 1, 0);
   imageMode(CENTER);
   colorMode(RGB, 255);
   blendMode(BLEND);

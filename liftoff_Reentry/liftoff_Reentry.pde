@@ -119,8 +119,8 @@ int flag = 0;
 
 
 void setup() {
-  //size(1920, 1080, P3D);
-  fullScreen(P3D);
+  size(3840, 2160, P3D);
+  //fullScreen(P3D);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
 
