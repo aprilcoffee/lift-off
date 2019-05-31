@@ -10,7 +10,7 @@ void mode1() {
     width/2.0, height/2.0, 0, 
     0, 1, 0);
   blendMode(ADD);
-  if (currentBeat>=48) {
+  if (currentBeat>=48 && CN[2][0]>=1) {
   } else {
     background(0);
   }

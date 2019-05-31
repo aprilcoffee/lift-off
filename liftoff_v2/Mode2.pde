@@ -1,8 +1,14 @@
 void mode2() { 
   pushMatrix();
-  
+
   modeFrameCount[2]++;
   background(0);
+
+  camera(width/2.0 + camShakeX, 
+    height/2.0 + camShakeY, 
+    (height/2.0) / tan(PI*30.0 / 180.0)+camShakeZ, 
+    width/2.0, height/2.0, 0, 
+    0, 1, 0);
   //previousWater[(int)random(200)][(int)random(200)] = 255;
   translate(width/2, height/2);
   drawWaterRipple();

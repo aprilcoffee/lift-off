@@ -12,7 +12,7 @@ class Particle {
     ppos = PVector.mult(PVector.random3D(), width);
     //ppos.x = floor(random(width));
     //ppos.y = floor(random(height));
-    randomlize();
+    returnToGrid();
   }
   void update() {
     pos.add(PVector.mult(PVector.sub(ppos, pos), 0.3));

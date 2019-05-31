@@ -94,7 +94,7 @@ void mode3() {
     SG[3][4]=false;
   }
 
-
+  rectMode(CENTER);
 
   if (volume>0.35)
     fx.render()

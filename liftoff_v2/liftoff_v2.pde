@@ -58,6 +58,7 @@ int transition0to1Dark = 0;
 int transition1to2Dark = 0;
 int transition2to3Dark = 0;
 int transition3to0Dark = 0;
+float transitionFuck = 0;
 int modeFrameCount[];
 
 
@@ -69,6 +70,10 @@ boolean initVideoPlaying = false;
 
 //Phase0
 ArrayList<Blob> blobs;
+
+//Phase1
+boolean phase1mode = false;
+
 
 //Phase2
 int phase1Counter = 0;
@@ -117,6 +122,10 @@ int newLatMinHalf = 0;
 int newLatMaxHalf = 0;   
 boolean showSide = false;
 int flag = 0;
+
+//Phase ChangeFuckingMode
+PImage crashImg;
+boolean changeFinish =false;
 
 
 void setup() {
@@ -233,31 +242,36 @@ void setup() {
   geometryInit();
   explosion = false;
 
+  //phase ChangeFuckingMode
+  crashImg = loadImage("crash.jpg");
+
   runtime = java.lang.Runtime.getRuntime();  
   phase = 0;
 }
 void draw() {
   soundCheck();
   //background(0);
-  switch(phase) {
-  case 0:
-    initPhase();
-    break;
-  case 1:
-    mode1();
-    break;
-  case 2:
-    mode2();
-    break;
-  case 3:
-    mode3();
-    break;
-  case 4:
-    mode4();
-    break;
-  case 5:
+
+  if (SG[6][1]==true && changeFinish==false) {
     mode5();
-    break;
+  } else {
+    switch(phase) {
+    case 0:
+      initPhase();
+      break;
+    case 1:
+      mode1();
+      break;
+    case 2:
+      mode2();
+      break;
+    case 3:
+      mode3();
+      break;
+    case 4:
+      mode4();
+      break;
+    }
   }
   //mode1();
 
