@@ -10,7 +10,7 @@ void mode1() {
     width/2.0, height/2.0, 0, 
     0, 1, 0);
   blendMode(ADD);
-  if (currentBeat>=48 && CN[2][0]>=1) {
+  if (currentBeat>=48 && CN[1][0]>=1) {
   } else {
     background(0);
   }
@@ -33,11 +33,19 @@ void mode1() {
 
   for (int x=0; x<=width; x+=30) {
     for (int y=0; y<=height; y+=30) {
-      float col = map(dist(targetXX, targetYY, x, y), 0, width/3, 200, 0);
+      int flag = modeFrameCount[1];
+      if (flag >= 200)flag = 200;
+      float col = map(dist(targetXX, targetYY, x, y), 0, width/3, modeFrameCount[1], 0);
+
       if (x%150==0&&y%150==0) {
-        for (int i=-5; i<=5; i++) {          
-          set(x, y+i, color(col+50));
-          set(x+i, y, color(col));
+        for (int i=-5; i<=5; i++) {
+          if (CN[1][0] == 2) {
+            set(x, y+i, color(col+50, 0, 0));
+            set(x+i, y, color(col));
+          } else {
+            set(x, y+i, color(col+50));
+            set(x+i, y, color(col));
+          }
         }
       } else {
         set(x, y, color(col));
@@ -61,14 +69,11 @@ void mode1() {
 
   fill(255);
   textAlign(CENTER);
-
   if ( (frameCount/100)%2==0) {
     for (int x=0; x<width; x+=50) {
       text(x, x, 20);
     }
   }
-
-
   textAlign(CORNER);
   if ((frameCount/100)%2==1) {
     for (int y=0; y<height; y+=50) {
@@ -78,13 +83,13 @@ void mode1() {
 
   //camera(0, 0, 1000, 0, 0, 0, 0, 1, 0);
 
-  if (currentBeat%8==0) {
-    targetXXX = random(100, width-100);
-    targetYYY = random(100, height-100);
-  }
+  //if (currentBeat%8==0) {
+
+  //}
   if (SG[1][0] == true) {
 
-
+    targetXXX = random(100, width-100);
+    targetYYY = random(100, height-100);
 
     SG[1][0] = false;
   }

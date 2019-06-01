@@ -48,7 +48,13 @@ public void con(int theA, int theB, int theC) {
   if (theA==2 && theB==1) {
     glitchReset();
   }
+  
+  
   /*
+  Phase1
+   [1][0] 0 no glitch
+   [1][0] 1 yes glitch
+  
   Phase2
    [2][0] 0 photoTriggerImageRect
    [2][0] 1 photoTriggerImageBW

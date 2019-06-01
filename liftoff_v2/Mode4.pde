@@ -66,7 +66,7 @@ void mode4() {
   }
   SG[4][0] = false;
 
-  blackHole();
+  //blackHole();
   if (volume<0.5)
     fx.render()
       .sobel()

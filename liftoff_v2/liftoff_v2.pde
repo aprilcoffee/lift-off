@@ -152,7 +152,7 @@ void setup() {
   myRemoteLocation = new NetAddress("127.0.0.1", 12000);
   oscP5.plug(this, "sig", "/sig");
   oscP5.plug(this, "mode", "/mode");  
-  oscP5.plug(this, "control", "/control");  
+  oscP5.plug(this, "con", "/con");  
   oscP5.plug(this, "linear", "/linear");    
   oscP5.plug(this, "bpm", "/bpm");  
   SG = new boolean[10][20];
@@ -224,9 +224,11 @@ void setup() {
   setupWater();
 
 
+
+  //Phase3
   particle = new ArrayList<Particle>();
-  for (int x=0; x<=width; x+=60) {
-    for (int y=0; y<=height; y+=60) {
+  for (int x=0; x<=width; x+=30) {
+    for (int y=0; y<=height; y+=30) {
       particle.add(new Particle(x, y));
     }
   }  
@@ -246,7 +248,7 @@ void setup() {
   crashImg = loadImage("crash.jpg");
 
   runtime = java.lang.Runtime.getRuntime();  
-  phase = 0;
+  phase = 3;
 }
 void draw() {
   soundCheck();

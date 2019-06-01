@@ -1,6 +1,10 @@
 void mode3() {
   background(0);
-  
+
+  imageMode(CORNER);
+  textureMode(NORMAL);
+  strokeWeight(2);
+  blendMode(ADD);
   modeFrameCount[3]++;
   pushMatrix();
   camera(width/2.0 + camShakeX, 
@@ -96,7 +100,7 @@ void mode3() {
 
   rectMode(CENTER);
 
-  if (volume>0.35)
+  if (random(10)>3) {
     fx.render()
       .sobel()
       //.bloom(0.1, 20, 30)
@@ -105,8 +109,7 @@ void mode3() {
       .brightPass(0.1)
       .blur(20, 30)
       .compose();
-
-  else
+  } else {
     fx.render()
       //.sobel()
       //.bloom(0.2, 20, 30)
@@ -115,7 +118,7 @@ void mode3() {
       .blur(20, 30)
       //.blur(1, 0.001)
       .compose();
-      
-      
+  }
+
   popMatrix();
 }
