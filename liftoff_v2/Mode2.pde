@@ -1,9 +1,11 @@
 void mode2() { 
   pushMatrix();
-
+  colorMode(RGB, 255);
   modeFrameCount[2]++;
-  background(0);
-
+  if (phase == 12) {
+  } else {
+    background(0);
+  }
   camera(width/2.0 + camShakeX, 
     height/2.0 + camShakeY, 
     (height/2.0) / tan(PI*30.0 / 180.0)+camShakeZ, 
@@ -12,7 +14,8 @@ void mode2() {
   //previousWater[(int)random(200)][(int)random(200)] = 255;
   translate(width/2, height/2);
   drawWaterRipple();
-  blendMode(BLEND);
+  blendMode(ADD);
+  translate(0, screenAdjust);
 
   //CornerCall
   if (SG[2][9] ==true) {
@@ -113,11 +116,6 @@ void mode2() {
     SG[2][4] = false;
   }
   ShowobservationStar();
-  // blendMode(ADD);
-  imageMode(CENTER);
-  image(observateStarBackground, 0, 0, width, height);
-  //  if (random(5)>4)
-  //   filter(INVERT);
 
   popMatrix();
   noStroke();

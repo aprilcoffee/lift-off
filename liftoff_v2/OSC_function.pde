@@ -3,7 +3,10 @@ public void bpm(int theA) {
   currentBeat = theA;
 }
 public void mode(int theA) {
-  phase = theA;
+  if (theA==1) {
+    transition = theA;
+    transiting = true;
+  } else phase = theA;
 }
 public void sig(int theA, int theB) {
   SG[theA][theB] = true;
@@ -32,15 +35,23 @@ public void sig(int theA, int theB) {
    [2][9] phase1CornerCall
    [2][10] spinMoveFaster
    
+   Phase3
+   [3][0] moveCam
+   [3][1] onstellation
+   
+   
    Phase4
-   [4][0] addStarTrigger
-   [4][1] showHalf //together
+   [4][0] showHalf //together
+   [4][1] addStarTrigger
    [4][2] showHalfTrigger //together
    [4][3] showAllgeo
    [4][4] changeTexture
    [4][5] textureOn
    [4][6] crashSide
    [4][7] startMove
+   [4][8] flyAway
+   [4][9] showHalfMode
+   [4][10] glitch
    */
 }
 public void con(int theA, int theB, int theC) {
@@ -48,20 +59,24 @@ public void con(int theA, int theB, int theC) {
   if (theA==2 && theB==1) {
     glitchReset();
   }
-  
-  
+
+
   /*
   Phase1
    [1][0] 0 no glitch
    [1][0] 1 yes glitch
-  
-  Phase2
+   
+   Phase2
    [2][0] 0 photoTriggerImageRect
    [2][0] 1 photoTriggerImageBW
    [2][0] 2 photoTriggerImage
    
    [2][1] 0 glitchTrigger
    [2][1] 1 glitchReset
+   
+   
+   Phase3
+   [3][0] glitch
    
    */
 }

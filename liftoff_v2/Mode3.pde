@@ -2,9 +2,11 @@ void mode3() {
   background(0);
 
   imageMode(CORNER);
-  textureMode(NORMAL);
-  strokeWeight(2);
+  strokeWeight(3);
   blendMode(ADD);
+  textSize(27);
+  colorMode(RGB);
+
   modeFrameCount[3]++;
   pushMatrix();
   camera(width/2.0 + camShakeX, 
@@ -12,7 +14,9 @@ void mode3() {
     (height/2.0) / tan(PI*30.0 / 180.0)+camShakeZ, 
     width/2.0, height/2.0, 0, 
     0, 1, 0);
-  if (SG[3][0]==true//&& 
+
+  translate(0, screenAdjust);
+  if (SG[3][0]==true //&& 
     //abs(camShakeXX-camShakeX)<10 &&
     //abs(camShakeYY-camShakeY)<10 &&
     //abs(camShakeZZ-camShakeZ)<10
@@ -53,13 +57,12 @@ void mode3() {
     Particle P = particle.get(constellation[s]);
     Particle PP = particle.get(constellation[s+1]);
     stroke(255);
-    strokeWeight(1);
+    strokeWeight(1.4);
     line(P.pos.x, P.pos.y, P.pos.z, 
       PP.pos.x, PP.pos.y, PP.pos.z
       );
     //vertex(P.pos.x, P.pos.y, P.pos.z);
   }
-
   stroke(135, 0);
   beginShape(TRIANGLE_STRIP);
   for (int s=0; s<particle.size(); s++) {
@@ -97,8 +100,38 @@ void mode3() {
     }
     SG[3][4]=false;
   }
-
   rectMode(CENTER);
+
+
+  if (CN[3][0] >= 2 && SG[3][10]) {
+
+    int tilesX = 14;
+    int tilesY = 14;
+
+    int tileW = int(width/tilesX);
+    int tileH = int(height/tilesY);
+
+    for (int y = 0; y < tilesY; y++) {
+      for (int x = 0; x < tilesX; x++) {
+
+        // WARP
+        int wave = int(sin(frameCount * 0.05 + ( x * y ) * 0.07) * 100);
+
+        // SOURCE
+        int sx = x*tileW + wave;
+        int sy = y*tileH;
+        int sw = tileW;
+        int sh = tileH;
+        // DESTINATION
+        int dx = x*tileW;
+        int dy = y*tileH;
+        int dw = tileW;
+        int dh = tileH;
+        copy(sx, sy, sw, sh, dx, dy, dw, dh);
+      }
+    }
+  }
+
 
   if (random(10)>3) {
     fx.render()

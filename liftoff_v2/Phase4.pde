@@ -1,4 +1,64 @@
 
+class Star {
+  PVector pos = new PVector();
+
+  float pz;
+  float speed;
+
+  float R, theta, v, proportion, proportionV;
+
+  float ssx, ssy;
+  Star(int eSpeed, float _proportionV) {
+    pos.x = random(-starWidth/4, starWidth/4);
+    pos.y = random(-starHeight/4, starHeight/4);
+    pos.z = random(starWidth);
+    pz = pos.z;
+    speed = eSpeed;
+    R = 100;
+    theta = random(360);
+    v =  random(1, 2);
+    proportion = 0;
+    proportionV = _proportionV;
+  }
+  void update() {
+    pos.z -= speed;
+    //if (pos.z < 0.5) {
+    //  pos.z = starWidth;
+    //  pos.x = random(-starWidth, starWidth);
+    //  pos.y = random(-starHeight, starHeight);
+    //  pz = pos.z;
+    //}
+    theta = theta + v;
+
+    if (starGoCenter==true) {
+      if (proportion < 1) {
+        proportion = proportion+proportionV;
+      } else {
+        proportion = 1;
+      }
+    }
+  }
+  void show(PGraphics P) {
+    float sx = map(pos.x/pos.z, 0, 1, 0, starWidth);
+    float sy = map(pos.y/pos.z, 0, 1, 0, starHeight);
+    float r = map(pos.z, 0, starWidth, 2, 0.3);
+    float px = map(pos.x/pz, 0, 1, 0, starWidth);
+    float py = map(pos.y/pz, 0, 1, 0, starHeight);
+
+    float x = (1-proportion)*px+proportion*R*cos(radians(theta));
+    float y = (1-proportion)*py+proportion*R*sin(radians(theta));
+    float z = R*sin(radians(frameCount));
+
+    float ssx = (1-proportion)*sx+proportion*R*cos(radians(theta-v));
+    float ssy = (1-proportion)*sy+proportion*R*sin(radians(theta-v));
+    float ssz = R*sin(radians(frameCount-1));
+
+    P.stroke(255, 200);
+    P.strokeWeight(r);
+    P.line(x, y, z, ssx, ssy, ssz);
+    pz = pos.z;
+  }
+}
 void geometryInit() {
 
   for (int i=0; i<=total; i++) {
@@ -147,13 +207,13 @@ class Geometry {
       beginShape(TRIANGLE_STRIP);
     }
     if (textureOn==true) {
-      //   texture(orbitTexture);
+      texture(orbitTexture);
     } else {
       if (showMode == 0) {
-        stroke(255, 150);
+        stroke(255, 100);
         //strokeWeight(0.5);
       } else if (showMode == 1) {
-        stroke(255, 200);
+        stroke(255, 150);
       } else if (showMode == 2) {
         noStroke();
       }
@@ -183,13 +243,13 @@ class Geometry {
       beginShape(TRIANGLE_STRIP);
     }
     if (textureOn==true) {
-      //  texture(orbitTexture);
+      texture(orbitTexture);
     } else {
       if (showMode == 0) {
-        stroke(255, 150);
+        stroke(255, 100);
         //strokeWeight(0.5);
       } else if (showMode == 1) {
-        stroke(255, 200);
+        stroke(255, 150);
       } else if (showMode == 2) {
         noStroke();
       }
@@ -389,5 +449,33 @@ class Geometry {
     globeTar[5] = new PVector(x6, y6, z6);
   }
   void press() {
+  }
+}
+
+
+void orbitTextureDraw(PGraphics P) {
+  P.beginDraw();
+  P.tint(255);
+  P.background(0, 0);
+  if (changeTexture==true) {
+    println("Hi");
+    currentPlanetImage = (int)random(5);
+    changeTexture = false;
+  }
+  P.image(planetImage[currentPlanetImage], 0, 0, P.width, P.height);
+  P.endDraw();
+}
+void resetSphereLocation() {
+  for (int i=0; i<total; i++) {
+    float lat = map(i, 0, total, -HALF_PI, HALF_PI);
+    float r2 = 1;
+    for (int j=0; j<total; j++) {
+      // lat -Pi/2 ~ Pi/2
+      // lon -PI ~ PI
+      float lon = map(j, 0, total, -PI, PI);
+      float r1 = 1;
+      Geometry G = geometry.get(i*(total+1) + j);
+      G.renewLocation(r1, r2, i, j);
+    }
   }
 }

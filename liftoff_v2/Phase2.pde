@@ -134,7 +134,10 @@ class TargetSystem {
             for (int j=0; j<height; j++) {
               color ctemp = (color)scanBG.get((int)map(i+x+width/2, 0, width, 0, scanBG.width), (int)map(j, 0, height, 0, scanBG.height));
               color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
-              set(i+xx+width/2, j, c);
+              //set(i+xx+width/2, j, c);
+              strokeWeight(3);
+              stroke(c);
+              point(i+xx+width/2, j);
             }
           }
         } else {
@@ -150,7 +153,11 @@ class TargetSystem {
             for (int j=0; j<height; j++) {
               color ctemp = (color)scanBG.get((int)map(i+x+width/2, 0, width, 0, scanBG.width), (int)map(j, 0, height, 0, scanBG.height));
               color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
-              set(i+xx+width/2, j, c);
+              //set(, c);
+              //set(i+xx+width/2, j, c);
+              strokeWeight(3);
+              stroke(c);
+              point(i+xx+width/2, j);
             }
           }
         }
@@ -176,7 +183,10 @@ class TargetSystem {
             for (int j=0; j<width; j++) {
               color ctemp = (color)scanBG.get((int)map(j, 0, width, 0, scanBG.width), (int)map(i+y+height/2, 0, height, 0, scanBG.height));
               color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
-              set(j, i+yy+height/2, c);
+              //set(j, i+yy+height/2, c);
+              strokeWeight(3);
+              stroke(c);
+              point(j, i+yy+height/2);
             }
           }
         } else {
@@ -192,7 +202,10 @@ class TargetSystem {
             for (int j=0; j<width; j++) {
               color ctemp = (color)scanBG.get((int)map(j, 0, width, 0, scanBG.width), (int)map(i+y+height/2, 0, height, 0, scanBG.height));
               color c = color(hue(ctemp), (int)saturation(ctemp)*tempTrans, (int)brightness(ctemp)*tempTrans);
-              set(j, i+yy+height/2, c);
+              //set(j, i+yy+height/2, c);
+              strokeWeight(3);
+              stroke(c);
+              point(j, i+yy+height/2);
             }
           }
         }
@@ -240,7 +253,7 @@ class SpaceImages {
   float photoX, photoY, photoZ;
   float r = 300;
   float angle = 90;
-  float imageSizeX = random(50, 150);
+  float imageSizeX = random(80, 200);
   float imageSizeY = imageSizeX/4*3;
   float ori_imageSizeY = imageSizeY;
   float ori_imageSizeX = imageSizeX;

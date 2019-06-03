@@ -9,6 +9,8 @@ void initPhase() {
   colorMode(RGB, 255);
   blendMode(BLEND);
   pushMatrix();
+  
+  translate(0,screenAdjust);
   float shakeGlitch = map(transition0to1Dark, 0, 255, 5, 150);
   LTGlogo = loadImage("LTG.png");
   LTGlogo.loadPixels();

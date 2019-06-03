@@ -9,6 +9,7 @@ void mode5() {
     0, 1, 0);
   //background(0);
 
+
   if (SG[6][2]==true) {
     image(crashImg, 0, 0, width, height);
     SG[6][2] = false;
@@ -29,6 +30,7 @@ void mode5() {
           int tempX = x1;//floor(map(x1, 0, width, 0, width));
           int tempY = y1;//floor(map(y1, 0, height, 0, height));
           set(x2, y2, get(tempX, tempY, w, h));
+          
         } else
           set(x2, y2, get(x1, y1, w/2, h));
       }

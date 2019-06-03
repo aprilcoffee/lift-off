@@ -56,11 +56,12 @@ int transition=0;
 boolean transiting = false;
 int transition0to1Dark = 0;
 int transition1to2Dark = 0;
-int transition2to3Dark = 0;
-int transition3to0Dark = 0;
+int transition3to4Dark = 0;
+int transition4to5Dark = 0;
 float transitionFuck = 0;
 int modeFrameCount[];
 
+int screenAdjust = 0;
 
 //initPhase
 PImage LTGlogo;
@@ -73,6 +74,9 @@ ArrayList<Blob> blobs;
 
 //Phase1
 boolean phase1mode = false;
+PImage[] bluePrint;
+int bluePrintLength = 7;
+int phase1ImageFlag = 0;
 
 
 //Phase2
@@ -102,7 +106,7 @@ int waterCols = 200;
 int waterRows = 200;
 float [][] currentWater;
 float [][] previousWater;
-float dampening = 0.95;
+float dampening = 0.965;
 
 //Phase3
 ArrayList<Particle> particle;
@@ -110,7 +114,7 @@ int[] constellation;
 
 //Phase4
 int total = 60;
-float geometryR = 400;
+float geometryR = 550;
 float flyI = 0;
 float flyJ=  0;
 boolean textureOn = false;
@@ -123,6 +127,37 @@ int newLatMaxHalf = 0;
 boolean showSide = false;
 int flag = 0;
 
+int phase2Counter = 0;
+PGraphics starField;
+PGraphics orbitTexture;
+ArrayList<Star> stars = new ArrayList<Star>();
+float speed;
+int starWidth = 800;
+int starHeight = 450;
+boolean flyAway = false;
+boolean changeGeometryMove=false;
+boolean addStarTrigger = false;
+int starTriggerCount = 0;
+int flyingAwayCount = 0;
+boolean showAllgeo = false;
+boolean crashSide = false;
+boolean showHalf = false;
+boolean showHalfTrigger = false;
+boolean startMove = false;
+boolean changeTexture = false;
+boolean spinMoveFaster = false;
+boolean starGoCenter = false;
+boolean geoMoving = false;
+boolean resetGeoLocation = false;
+boolean phase2BWtrigger = false;
+PImage[] planetImage;
+int planetImageLength = 6;
+int currentPlanetImage = 0;
+float phase3moveA; 
+float phase3moveT;
+
+
+
 //Phase ChangeFuckingMode
 PImage crashImg;
 boolean changeFinish =false;
@@ -130,8 +165,8 @@ boolean changeFinish =false;
 
 void setup() {
   // size(3840, 2160, P3D);
-  size(1920, 1080, P3D);
-  //fullScreen(P3D);
+  //size(1920, 1080, P3D);
+  fullScreen(P3D);
   hint(DISABLE_DEPTH_TEST);
   blendMode(ADD);
 
@@ -196,6 +231,11 @@ void setup() {
     blobs.add(new Blob(0, 0, random(200, 230)));
   }
 
+  //phase1
+  bluePrint = new PImage[bluePrintLength];
+  for (int s=0; s<bluePrintLength; s++) {
+    bluePrint[s] = loadImage("bluePrint/0"+(s+1)+".jpeg");
+  }
 
   //Phase2
   spaceImg = new PImage[photoLength];
@@ -243,19 +283,34 @@ void setup() {
   geometry = new ArrayList<Geometry>();
   geometryInit();
   explosion = false;
+  starField = createGraphics(800, 450, P3D);
+  orbitTexture = createGraphics(600, 600, P3D);
+  planetImage = new PImage[planetImageLength];
+  for (int s=0; s<planetImageLength; s++) {
+    planetImage[s] = loadImage("planet"+s+".jpeg");
+  }
 
   //phase ChangeFuckingMode
   crashImg = loadImage("crash.jpg");
 
   runtime = java.lang.Runtime.getRuntime();  
-  phase = 3;
+  phase = 2;
 }
 void draw() {
   soundCheck();
   //background(0);
-
+  //println("now Phase " + phase);
   if (SG[6][1]==true && changeFinish==false) {
     mode5();
+  } else if (transiting) {
+    switch(transition) {
+    case 0:
+      break;
+    case 1:
+      initPhase();
+      transitionShow0to1();
+      break;
+    }
   } else {
     switch(phase) {
     case 0:
@@ -271,6 +326,25 @@ void draw() {
       mode3();
       break;
     case 4:
+      mode4();
+      break;
+    case 5:
+      initPhase();
+      break;
+
+
+    case 12:
+      mode1();
+      mode2();
+      break;
+    case 34:
+      mode3();
+      mode4();
+      break;
+    case 15:
+      mode1();
+      mode2();
+      mode3();
       mode4();
       break;
     }

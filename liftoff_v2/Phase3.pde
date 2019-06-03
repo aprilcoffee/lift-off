@@ -34,7 +34,6 @@ class Particle {
 
       noFill();
     } else if (cor_y%50==0 && cor_x%500==0) {
-
       fill(255);
       //text(nfc(cor_x/10- 50, 0), 10, 10);
       //text(nfc(cor_y/10- 50, 0), 10, 20);
@@ -44,14 +43,14 @@ class Particle {
     }
 
 
-
     if (SG[3][6] == true) {
+      
+      
     }
     stroke(map(cor_x, 0, width, 0, 255), 
       map(cor_y, 0, height, 0, 255), 
       map(pos.z, -500, 500, 0, 255));
     stroke(180, 180, 250);
-
     if (cor_x%100==0 && cor_y%100==0) {
       for (int s=-5; s<5; s++) {
         if(SG[3][7] == true){
