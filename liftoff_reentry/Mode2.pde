@@ -79,7 +79,7 @@ void mode2() {
       Particle P = particle.get(constellation[s]);
       Particle PP = particle.get(constellation[s+1]);
       lscr[scr_num].stroke(255);
-      lscr[scr_num].strokeWeight(3);
+      lscr[scr_num].strokeWeight(4);
       lscr[scr_num].line(P.pos.x, P.pos.y, P.pos.z, 
         PP.pos.x, PP.pos.y, PP.pos.z
         );

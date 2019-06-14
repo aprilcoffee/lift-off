@@ -418,11 +418,11 @@ void showGrid() {
   blendMode(REPLACE);
   rectMode(CORNER);
   noFill();
-  stroke(100);
-  rect(0, 0, 960, 960);
-  rect(960, 0, 960, 960);
-  rect(1920, 0, 960, 960);
-  rect(2880, 0, 960, 960);
+  //stroke(100);
+  //rect(0, 0, 960, 960);
+  //rect(960, 0, 960, 960);
+  //rect(1920, 0, 960, 960);
+  //rect(2880, 0, 960, 960);
 
   fill(60);
   rect(0, 960, width, height-960);
