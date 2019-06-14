@@ -4,6 +4,9 @@ void mode2() {
 
 
   if (phase==12) {
+  } else if (SG[3][10]) {
+    if (random(3)>2)
+      background(0);
   } else {
     background(0);
   }
@@ -66,7 +69,7 @@ void mode2() {
       Particle P = particle.get(s);
       P.update();
       if (random(10)>8) {
-        lscr[scr_num].strokeWeight(random(3));
+        lscr[scr_num].strokeWeight(random(4));
       } else {      
         lscr[scr_num].strokeWeight(2);
       }
@@ -89,6 +92,12 @@ void mode2() {
     //  lscr[scr_num].vertex(P.pos.x, P.pos.y, P.pos.z);
     //}
     //lscr[scr_num].endShape();
+
+
+
+
+
+
 
     lscr[scr_num].endDraw();
     image(lscr[scr_num], scr_num*1920, 0, 1920, newHeight);
@@ -121,21 +130,19 @@ void mode2() {
     }
     SG[3][4]=false;
   }
+  if (CN[3][0] >= 3 && SG[3][10]) {
 
-
-  if (CN[3][0] >= 2 && SG[3][10]) {
-
-    int tilesX = 14;
-    int tilesY = 14;
+    int tilesX = 10;
+    int tilesY = 8;
 
     int tileW = int(width/tilesX);
-    int tileH = int(height/tilesY);
+    int tileH = int(newHeight/tilesY);
 
     for (int y = 0; y < tilesY; y++) {
       for (int x = 0; x < tilesX; x++) {
 
         // WARP
-        int wave = int(sin(frameCount * 0.05 + ( x * y ) * 0.07) * 100);
+        int wave = int(sin(frameCount * 0.05 + ( x * y ) * 0.5) * 100);
 
         // SOURCE
         int sx = x*tileW + wave;
@@ -147,18 +154,25 @@ void mode2() {
         int dy = y*tileH;
         int dw = tileW;
         int dh = tileH;
-        copy(sx, sy, sw, sh, dx, dy, dw, dh);
+
+        copy( sx, sy, sw, sh, dx, dy, dw, dh);
       }
     }
+    //if (scr_num==1)
+    //  SG[3][10]= false;
   }
+
+
+
+  blendMode(ADD);
   if (random(10)>3) {
     fx.render()
       .sobel()
       //.bloom(0.1, 20, 30)
       //.blur(10, 0.5)
       //.toon()
-      .brightPass(0.1)
-      .blur(20, 30)
+      .brightPass(0.2)
+      .blur(20, 40)
       .compose();
   } else {
     fx.render()
@@ -166,7 +180,7 @@ void mode2() {
       //.bloom(0.2, 20, 30)
       //.toon()
       //.brightPass(1)
-      .blur(20, 30)
+      .blur(20, 40)
       //.blur(1, 0.001)
       .compose();
   }

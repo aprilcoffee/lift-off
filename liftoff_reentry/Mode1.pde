@@ -31,8 +31,8 @@ void mode1() {
     }
 
     lscr[q].strokeWeight(3);
-    targetXX += (targetXXX-targetXX)*0.075;
-    targetYY += (targetYYY-targetYY)*0.075;
+    targetXX += (targetXXX-targetXX)*0.04;
+    targetYY += (targetYYY-targetYY)*0.04;
     //  for (int x=0; x<width; x++) {
     //    for (int y=0; y<height; y++) {
     //      float col = map(dist(targetXX, targetYY, x, y), 0, width/2, 255, 0);
@@ -114,12 +114,13 @@ void mode1() {
         if (flag >= 150)flag = 150;
         float col = map(abs(dist(targetXX, targetYY, x, y)), 0, (newHeight/3) * CN[1][0], 200, 0);
         //println(col);
+        lscr[q].colorMode(RGB);
         if (x%150==0&&y%150==0) {
           for (int i=-5; i<=5; i++) {
-            if (CN[1][0] == 2) {
-              lscr[q].stroke(color(col+50, 0, 0));
+            if (CN[1][0] >= 2) {
+              lscr[q].stroke(color(col+100, 0, 0));
               lscr[q].point(x, y+i);
-              lscr[q].stroke(color(col+50, 0, 0));
+              lscr[q].stroke(color(col+100, 0, 0));
               lscr[q].point(x+i, y);
               //set(x, y+i, color(col+50, 0, 0));
               //set(x+i, y, color(col));
@@ -154,9 +155,9 @@ void mode1() {
     //if (frameCount%2==0 && (frameCount/100)%2==0)
 
 
-    lscr[q].fill(255);
-    lscr[q].textAlign(CENTER);
-    if ( (frameCount/100)%2==0) {
+    if (CN[1][0]>=2) {
+      lscr[q].fill(255);
+      lscr[q].textAlign(CENTER);
       for (int x=0; x<tempWidth; x+=100) {
         lscr[q].pushMatrix();
         lscr[q].translate(x, 30);
@@ -164,15 +165,37 @@ void mode1() {
         lscr[q].text(x, 0, 0);
         lscr[q].popMatrix();
       }
-    }
-    lscr[q].textAlign(CORNER);
-    if ((frameCount/100)%2==1) {
+
+      lscr[q].textAlign(CORNER);
       for (int y=0; y<newHeight; y+=50) {
         lscr[q].pushMatrix();
         lscr[q].translate(0, y);
         //lscr[q].scale(1.3);
         lscr[q].text(y, 0, 0);
         lscr[q].popMatrix();
+      }
+    } else {
+
+      lscr[q].fill(255);
+      lscr[q].textAlign(CENTER);
+      if ( (frameCount/100)%2==0) {
+        for (int x=0; x<tempWidth; x+=100) {
+          lscr[q].pushMatrix();
+          lscr[q].translate(x, 30);
+          //lscr[q].scale(1.3);
+          lscr[q].text(x, 0, 0);
+          lscr[q].popMatrix();
+        }
+      }
+      lscr[q].textAlign(CORNER);
+      if ((frameCount/100)%2==1) {
+        for (int y=0; y<newHeight; y+=50) {
+          lscr[q].pushMatrix();
+          lscr[q].translate(0, y);
+          //lscr[q].scale(1.3);
+          lscr[q].text(y, 0, 0);
+          lscr[q].popMatrix();
+        }
       }
     }
 
@@ -199,16 +222,16 @@ void mode1() {
         float whiteWid;
         switch(CN[1][0]) {
         case 0:
-          whiteWid = tempWidth/12;
+          whiteWid = tempWidth/10;
           break;
         case 1:
-          whiteWid = tempWidth/12;
+          whiteWid = tempWidth/8;
           break;
         case 2:
-          whiteWid = tempWidth/18;
+          whiteWid = tempWidth/12;
           break;
         case 3:
-          whiteWid = tempWidth/20;
+          whiteWid = tempWidth/18;
           break;
         default:
           whiteWid = tempWidth/20;
@@ -222,7 +245,7 @@ void mode1() {
       }
 
       if (q==1)
-        SG[1][0] = false;
+        SG[1][1] = false;
     }
     if (SG[1][2] == true) {
 

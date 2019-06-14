@@ -15,7 +15,7 @@ class Particle {
     returnToGrid();
   }
   void update() {
-    pos.add(PVector.mult(PVector.sub(ppos, pos), 0.3));
+    pos.add(PVector.mult(PVector.sub(ppos, pos), 0.1));
   }
   void show(PGraphics P) {
     P.pushMatrix();
@@ -70,6 +70,7 @@ class Particle {
       } else if (SG[3][6]==true) {
         P.stroke(255, 250);
       }
+      P.stroke(180, 180, 250);
       P.point(0, 0);
     }
 

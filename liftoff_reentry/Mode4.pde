@@ -3,6 +3,8 @@ boolean triggerTransGlitch = false;
 int tempShowA = 0;
 int tempShowB = 0;
 void mode4() {
+  if (CN[4][0]<=2)textureOn=false;
+
 
   if (frameCount%1800==0 && CN[4][0]==1)  geometryInit();
   if (frameCount%300==0 && CN[4][0]==2) geometryInit();
@@ -341,15 +343,15 @@ void mode4() {
 
 
   if (triggerTransGlitch) {
-    for (int s=0; s<30; s++) {
-      int x1 = floor(random(width/3));
+    for (int s=0; s<40; s++) {
+      int x1 = floor(random(width));
       int y1 = floor(random(newHeight));
 
       int x2 = x1 + floor(random(-50, 50));
       int y2 = y1 + floor(random(-10, 10));
 
       int w = width;
-      int h = round(random(5, 10));
+      int h = round(random(5, 7));
 
       copy(x2, y2, w, h, x1, y1, w/2, h);
     }

@@ -15,13 +15,13 @@ void transitionShow0to1() {
   colorMode(RGB, 255);
   fill(0, transition0to1Dark);
   
-  rect(width/2, height/2, width, height);
+  rect(0,0, width, 960);
 }
 
 
 void transitionShow4to0() {
   blendMode(BLEND);
-  transition4to0Dark+=2;
+  transition4to0Dark+=1;
   println("4To0 : " +transition4to0Dark);
   if (transition4to0Dark>=255) {
     transition4to0Dark = 255;
@@ -33,7 +33,7 @@ void transitionShow4to0() {
   colorMode(RGB, 255);
   fill(0, transition4to0Dark);
   rectMode(CORNER);
-  rect(0, 0, width, height/2);
+  rect(0, 0, width, 960);
 }
 
 

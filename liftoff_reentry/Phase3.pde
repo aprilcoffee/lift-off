@@ -101,31 +101,31 @@ class TargetSystem {
     if (SG[2][2] == true) {
       /*
       v = 1.3;
-      colorFade -=2;
-      if (colorFade<2) colorFade = 0; 
-      if (dir>0) {
-        for (int s=-50; s<=50; s+=4) {
-          P.stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
-          P.line(x-s, -newHeight, x-s, newHeight);
-        }
-      } else {
-        for (int s=-50; s<=50; s+=4) {
-          P.stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
-          P.line(-P.width, y-s, P.width, y-s);
-        }
-      }
-      P.pushMatrix();
-      P.fill(255);
-      P.translate(x, y);
-      P.textSize(12);
-      P.text(nfc(x, 3), 10, -15);
-      P.text(nfc(y, 3), 10, 0);
-      P.text(nfc(angle, 3), 10, 15);
-
-      P.noStroke();
-      P.fill(255);
-      P.ellipse(0, 0, 5, 5);
-      P.popMatrix();*/
+       colorFade -=2;
+       if (colorFade<2) colorFade = 0; 
+       if (dir>0) {
+       for (int s=-50; s<=50; s+=4) {
+       P.stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
+       P.line(x-s, -newHeight, x-s, newHeight);
+       }
+       } else {
+       for (int s=-50; s<=50; s+=4) {
+       P.stroke(255, colorFade, colorFade, 150*sin(radians(map(s, -20, 20, 0, 180))) * map(transition1to2Dark, 0, 255, 1, 0));
+       P.line(-P.width, y-s, P.width, y-s);
+       }
+       }
+       P.pushMatrix();
+       P.fill(255);
+       P.translate(x, y);
+       P.textSize(12);
+       P.text(nfc(x, 3), 10, -15);
+       P.text(nfc(y, 3), 10, 0);
+       P.text(nfc(angle, 3), 10, 15);
+       
+       P.noStroke();
+       P.fill(255);
+       P.ellipse(0, 0, 5, 5);
+       P.popMatrix();*/
     } else  if (SG[2][0]==true) {
       P.colorMode(HSB, 255);
       if (dir==1) {
@@ -336,6 +336,7 @@ class SpaceImages {
     dead = true;
   }
   void showImage(PGraphics P) {
+    pushMatrix();
     P.noFill();
     P.pushMatrix();
     P.translate(photoX, photoY, photoZ);
@@ -376,6 +377,9 @@ class SpaceImages {
       P.line(photoX-imageSizeX/2, photoY, photoZ, textX, textY, 0);
     else
       P.line(photoX+imageSizeX/2, photoY, photoZ, textX, textY, 0);
+
+
+    popMatrix();
   }
 }
 

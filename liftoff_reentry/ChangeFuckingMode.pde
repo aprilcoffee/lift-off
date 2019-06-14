@@ -30,7 +30,6 @@ void mode5() {
           int tempX = x1;//floor(map(x1, 0, width, 0, width));
           int tempY = y1;//floor(map(y1, 0, height, 0, height));
           set(x2, y2, get(tempX, tempY, w, h));
-          
         } else
           set(x2, y2, get(x1, y1, w/2, h));
       }
