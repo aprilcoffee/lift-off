@@ -1,13 +1,13 @@
 # liftoff
 Audio-Visual performance using MaxMsp, Processing3 </br>
 with Processing3 library</br>
-minim, oscP5, netP5, themidibus</br>
+sound, oscP5, netP5, themidibus, postfx</br>
 
 # Environment
-Max/Msp 7.3.1</br>
-Processing 3.4</br>
+Max/Msp 8.0.6</br>
+Processing 3.5.3</br>
 
 # Performance Devices & Controller
-LaunchKey Mini</br>
+Launch Control XL</br>
 Focusrite Scarlett 6i6</br>
 Allen & Heath ZED-10 (No-input Noise)</br>
